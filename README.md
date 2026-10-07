@@ -2,7 +2,7 @@
 
 An explainable, human-in-the-loop prototype that helps a verified direct manager understand an employee's accumulated access and prepare a request for ICT or Service Desk.
 
-> **Project status:** Portfolio demo v1.0. The current version uses synthetic JSON data and a deterministic rule engine. It does not connect to a tenant, call a language model, open tickets, or change access.
+> **Project status:** Portfolio demo with an evidence-backed briefing. The default uses synthetic JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a tenant, open tickets, or change access.
 
 
 
@@ -27,7 +27,7 @@ The assistant cannot grant, remove, approve, or deny access. It cannot submit a 
 
 Identity decisions are high-impact. Version 1.0 therefore keeps authorization, expiry calculation, anomaly flags, and access-profile matching deterministic and testable. This is the evidence layer an AI summary can safely sit on top of later.
 
-An optional language-model phase is planned only for manager-friendly summarization. It must be grounded exclusively in the structured report, show supporting evidence, treat directory text as untrusted input, and remain unable to call write or ticket-submission tools. The project does not claim that deterministic rules are generative AI.
+The optional language-model layer orders existing findings for a manager briefing. It returns evidence IDs only; the server validates that every ID appears exactly once and renders the original facts. It cannot generate new access facts, omit findings, or call tools. Without a model, or if its output is invalid, a deterministic briefing remains available. This is AI-assisted evidence ordering, not free-form generative summarization.
 
 ## Manager authorization
 
@@ -62,7 +62,21 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000) and use the pre-filled synth
 - employee: `aku.ankka`
 - review date: `2026-10-07`
 
-The browser application supports the complete demo flow: manager verification, access inventory, account-expiry warning, attribute-based suggestions, and a copyable Service Desk draft. It runs on localhost and includes no outbound application integrations.
+The browser application supports the complete demo flow: manager verification, access inventory, account-expiry warning, attribute-based suggestions, and a copyable Service Desk draft. It runs on localhost. By default it makes no model calls. Select **Prepare briefing** after opening a review to see cited findings and timing.
+
+## Optional local AI ordering
+
+With Ollama running locally and a local model already installed, start:
+
+```powershell
+python -m access_review.web --ollama-model YOUR_LOCAL_MODEL
+```
+
+Use your installed model name. The application calls only `127.0.0.1:11434`, disables HTTP proxies and redirects, and rejects model names containing `cloud`. Configure Ollama itself for local-only operation; a loopback address alone cannot prove that its service does not forward data. Keep using synthetic data.
+
+The briefing displays its mode (rule-based, AI-ordered, or fallback), report-path citations, elapsed time, and attempted model calls. Source collection timestamps and completeness are currently unknown and are explicitly labelled. It makes no monetary savings claims.
+
+See [AI briefing design and evaluation](docs/AI_BRIEFING.md) for boundaries, budgets, tests, and remaining work.
 
 ## Run the CLI
 
@@ -171,7 +185,9 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 - [ ] Read-only Entra ID lab adapter using Microsoft Graph
 - [ ] Read-only AD DS lab adapter for manager and account-expiry attributes
 - [ ] Shared mailbox and distribution-group adapters
-- [ ] Optional LLM summary grounded only in collected evidence
+- [x] Optional local LLM ordering of cited evidence with deterministic fallback
+- [ ] Evaluate ordering quality with a real local model
+- [ ] Free-form grounded summaries, if justified by evaluation
 - [ ] Audit logging, role-based access, and review export
 
 These integrations are deliberately outside the synthetic portfolio demo. They require a dedicated lab tenant, explicit permission review, and tenant-specific configuration; the demo is complete and usable without them.
@@ -188,3 +204,46 @@ These integrations are deliberately outside the synthetic portfolio demo. They r
 ## Disclaimer
 
 This is a portfolio and lab project, not a production authorization system. Findings and suggestions may contain false positives. A qualified human reviewer is responsible for every request and access decision.
+
+
+## Repeatable Ankkalinna evaluation
+
+Five synthetic scenarios now exercise department transfer, imminent expiry, mixed
+findings, untrusted directory text, and empty evidence. Run
+`python -m access_review.evaluate` from the repository root. See
+[evaluation instructions and baseline](evaluation/README.md).
+
+## Expanded Ankkalinna scenario foundation
+
+The combined organization dataset contains **12 employees**, including Mikki Hiiri,
+Taavi Ankka and Hansu Hanhi. Hansu reports to Mummo Ankka; the other demo employees
+report to Roope Ankka. The standalone suite adds **22 acceptance cases** for joiners,
+role changes, seasonal work, inherited access, mail resources, lifecycle boundaries,
+manager conflicts, unauthorized requesters, and duplicate identity data.
+
+```powershell
+python -m access_review.web --snapshot access_review/demo_data/ankkalinna_organization.json
+```
+
+See the [Finnish scenario catalogue and account list](scenarios/README.md) for every
+case, expected outcome and runnable commands. Cases are synthetic alternatives,
+not a historical audit trail. The original five model-ordering evaluation cases
+remain separate from these functional acceptance tests.
+
+## Choose a case in the browser
+
+Run `python -m access_review.web` from the source checkout. The Ankkalinna case
+selector loads all 22 standalone scenarios and opens the selected review with
+its sample employee, manager and date. The empty option keeps the configured
+snapshot and manual identity fields. Denial/error scenarios deliberately show an
+error rather than a report. Navigation links connect current access, attention
+items and the Service Desk request. Account-expiry notice drafts are now visible.
+
+The catalogue is synthetic demo metadata, not a production employee directory.
+Scenario IDs select server-loaded fixtures; HTTP callers cannot provide file paths.
+Every review, briefing and draft reruns authorization against the selected fixture.
+When `scenarios/cases.json` is absent (for example a wheel-only installation), the
+manual snapshot workflow remains available and the catalogue is empty.
+
+GitHub Actions now includes `scripts/browser-smoke.cjs` to exercise all cases,
+mobile overflow, briefings, drafts and stale-response handling with Chromium.

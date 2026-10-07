@@ -1,0 +1,31 @@
+{
+  "employees": [
+    {
+      "user_id": "iines.ankka",
+      "display_name": "Iines Ankka",
+      "job_title": "HR Specialist",
+      "department": "Human Resources",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2026-10-20",
+      "contract_end_date": "2027-06-30"
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "iines.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-HR",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Human Resources"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    }
+  ],
+  "access_profiles": []
+}

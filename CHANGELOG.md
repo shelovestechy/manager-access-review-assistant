@@ -11,3 +11,27 @@
 - Added restrictive browser security headers and local-only default binding.
 - Added automated authorization, analysis, API, and safety-boundary tests.
 - Added GitHub Actions continuous integration and architecture/security documentation.
+
+
+
+## Unreleased — evidence-backed briefing
+
+- Added cited briefings and opt-in local Ollama evidence ordering.
+- Validate model output as an exact permutation; preserve every finding on failure.
+- Show elapsed time, call count, and explicit snapshot coverage limitations.
+- Reject blank/non-string manager identities and avoid cross-source suggestion-name collisions.
+- Bind draft and briefing requests to the opened review's identities.
+- Added regression, model-contract, transport, and API authorization tests.
+
+- Standardized demo identities and locations to Aku Ankka, Roope Ankka and Ankkalinna.
+- Added five labelled evaluation scenarios, pairwise scoring and an offline baseline.
+- Do not credit fallback output as successful model evaluation.
+
+- Added 12-employee Ankkalinna organization snapshot and 22 standalone acceptance scenarios.
+- Added explicit expected outcomes, denial/error cases, account-expiry boundaries and data-isolation tests.
+- Added Finnish scenario catalogue with demo identities, commands and feature limitations.
+
+- Added 22-case browser selector with server-side fixture allowlist and repeated authorization.
+- Added review navigation and visible expiry verification drafts.
+- Guarded delayed review/draft responses when switching scenarios.
+- Added API isolation tests and Chromium CI smoke coverage.

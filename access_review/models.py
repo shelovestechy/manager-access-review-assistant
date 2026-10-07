@@ -29,6 +29,9 @@ class Employee:
             "entra_manager_id",
         )
         _require_fields(value, required, "employee")
+        for name in required:
+            if not isinstance(value[name], str):
+                raise ValueError(f"employee.{name} must be a string")
         return cls(
             **{name: str(value[name]) for name in required},
             ad_account_expires_at=_optional_date(value.get("ad_account_expires_at"), "ad_account_expires_at"),
@@ -125,3 +128,4 @@ def _require_fields(value: dict[str, Any], names: tuple[str, ...], label: str) -
     missing = [name for name in names if name not in value]
     if missing:
         raise ValueError(f"{label} is missing required fields: {', '.join(missing)}")
+

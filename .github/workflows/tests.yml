@@ -24,3 +24,24 @@ jobs:
 
       - name: Verify distributable package
         run: python -m pip wheel . --no-deps --wheel-dir dist
+
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Test Ankkalinna browser flows
+        run: node scripts/browser-smoke.cjs
+      - name: Retain browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ankkalinna-browser-results
+          path: browser-results/

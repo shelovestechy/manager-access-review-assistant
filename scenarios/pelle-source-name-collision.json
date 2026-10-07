@@ -1,0 +1,49 @@
+{
+  "employees": [
+    {
+      "user_id": "pelle.peloton",
+      "display_name": "Pelle Peloton",
+      "job_title": "Engineer",
+      "department": "Engineering",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "pelle.peloton",
+      "source": "Active Directory",
+      "resource_type": "security_group",
+      "name": "Paja-Lab",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Engineering"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    }
+  ],
+  "access_profiles": [
+    {
+      "name": "Engineer baseline",
+      "job_titles": [
+        "Engineer"
+      ],
+      "departments": [
+        "Engineering"
+      ],
+      "suggestions": [
+        {
+          "name": "Paja-Lab",
+          "source": "Entra ID",
+          "resource_type": "security_group",
+          "purpose": "Documented role requirement; validate eligibility"
+        }
+      ]
+    }
+  ]
+}

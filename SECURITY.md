@@ -48,3 +48,21 @@ Exact permissions will be selected during the lab-integration phase because they
 ## Reporting a security issue
 
 Do not open a public issue containing credentials, tenant identifiers, employee information, or access data. Use the repository owner's private contact channel instead.
+
+
+
+## Optional local model boundary
+
+The evidence-ordering adapter is opt-in, fixed to loopback, and does not use
+HTTP proxies or follow redirects. It has no tool definitions, retry loop, or
+write integration. Output must contain each server-issued evidence ID exactly
+once. The UI uses textContent, not model-generated HTML. Directory text remains
+untrusted: malicious text could influence ordering, but cannot become a new
+finding or remove evidence through this output contract. The full report remains
+visible. IDs are report-local references, not persistent identity IDs.
+
+Ollama must independently be configured for local-only operation. Rejecting model
+names containing `cloud` is only an extra guard, not a guarantee about a local
+service's behavior. Use synthetic data. This demo still has no authenticated login;
+typing a matching manager ID is a simulated relationship check, not authentication.
+Do not expose it as a production service.

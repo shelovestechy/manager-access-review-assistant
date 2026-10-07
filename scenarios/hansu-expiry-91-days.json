@@ -1,0 +1,17 @@
+{
+  "employees": [
+    {
+      "user_id": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "job_title": "Seasonal Farm Assistant",
+      "department": "Farm",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "mummo.ankka",
+      "entra_manager_id": "mummo.ankka",
+      "ad_account_expires_at": "2027-01-06",
+      "contract_end_date": null
+    }
+  ],
+  "entitlements": [],
+  "access_profiles": []
+}

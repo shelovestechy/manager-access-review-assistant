@@ -1,0 +1,46 @@
+{
+  "employees": [
+    {
+      "user_id": "mikki.hiiri",
+      "display_name": "Mikki Hiiri",
+      "job_title": "Security Analyst",
+      "department": "Security",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "mikki.hiiri",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Security-Readers",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Security"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "mikki.hiiri",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Security-Admins",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Security"
+      ],
+      "risk_tags": [
+        "privileged"
+      ],
+      "organization_wide": false
+    }
+  ],
+  "access_profiles": []
+}

@@ -11,6 +11,7 @@ from urllib.parse import urlsplit
 
 from .analyzer import analyze_access
 from .repository import load_snapshot
+from .summary import OllamaRanker, summarize_report
 from .service_desk import build_access_change_draft
 
 
@@ -19,8 +20,28 @@ DEFAULT_SNAPSHOT = Path(__file__).with_name("demo_data") / "sample_access_snapsh
 MAX_REQUEST_BYTES = 64 * 1024
 
 
-def make_handler(snapshot_path: str | Path):
+def make_handler(snapshot_path: str | Path, *, summary_ranker=None, scenario_manifest=None):
     snapshot = load_snapshot(snapshot_path)
+    manifest_path = Path(scenario_manifest) if scenario_manifest else Path(__file__).parents[1] / "scenarios/cases.json"
+    scenarios = {}
+    catalogue = []
+    if manifest_path.is_file():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for case in manifest["cases"]:
+            # Only trusted startup configuration can name files, never HTTP input.
+            scenarios[case["id"]] = load_snapshot(manifest_path.parent / case["snapshot"])
+            catalogue.append({key: case[key] for key in
+                              ("id", "title", "employee", "manager", "review_date")})
+
+    def selected_snapshot(payload):
+        scenario_id = payload.get("scenario_id", "")
+        if not isinstance(scenario_id, str):
+            raise ValueError("scenario_id must be a string")
+        if not scenario_id:
+            return snapshot
+        if scenario_id not in scenarios:
+            raise ValueError("Unknown demo scenario")
+        return scenarios[scenario_id]
 
     class AccessReviewHandler(BaseHTTPRequestHandler):
         server_version = "AccessReviewDemo/1.0"
@@ -36,6 +57,9 @@ def make_handler(snapshot_path: str | Path):
                 "/assets/app.js": ("app.js", "text/javascript; charset=utf-8"),
                 "/assets/favicon.svg": ("favicon.svg", "image/svg+xml"),
             }
+            if path == "/api/demo-scenarios":
+                self._send_json(HTTPStatus.OK, {"mode": "synthetic-demo-only", "scenarios": catalogue})
+                return
             if path == "/api/health":
                 self._send_json(
                     HTTPStatus.OK,
@@ -57,12 +81,16 @@ def make_handler(snapshot_path: str | Path):
             path = urlsplit(self.path).path
             try:
                 payload = self._read_json()
+                if path == "/api/summary":
+                    report = _create_review(selected_snapshot(payload), payload)
+                    self._send_json(HTTPStatus.OK, summarize_report(report, summary_ranker))
+                    return
                 if path == "/api/review":
-                    report = _create_review(snapshot, payload)
+                    report = _create_review(selected_snapshot(payload), payload)
                     self._send_json(HTTPStatus.OK, report)
                     return
                 if path == "/api/service-desk-draft":
-                    report = _create_review(snapshot, payload)
+                    report = _create_review(selected_snapshot(payload), payload)
                     additions = _string_list(payload.get("additions", []), "additions")
                     removals = _string_list(payload.get("removals", []), "removals")
                     reason = _required_string(payload, "reason", max_length=2000)
@@ -183,12 +211,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--snapshot", type=Path, default=DEFAULT_SNAPSHOT, help="Synthetic snapshot path"
     )
+    parser.add_argument("--ollama-model", help="Optional locally installed model for evidence ordering")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    server = ThreadingHTTPServer((args.host, args.port), make_handler(args.snapshot))
+    ranker = OllamaRanker(args.ollama_model) if args.ollama_model else None
+    server = ThreadingHTTPServer((args.host, args.port), make_handler(args.snapshot, summary_ranker=ranker))
     print(f"Read-only demo: http://{args.host}:{args.port}")
     print("Press Ctrl+C to stop.")
     try:
@@ -202,3 +232,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

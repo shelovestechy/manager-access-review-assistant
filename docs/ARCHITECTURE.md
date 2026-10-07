@@ -70,3 +70,16 @@ Each adapter must return normalized data with source evidence and collection tim
 ## Deployment boundary
 
 Version 1.0 is a local portfolio demonstration bound to `127.0.0.1`. It is not intended for public hosting or production identity data. A production service would additionally require enterprise authentication, tenant isolation, server-side sessions, audit logging, secure secret storage, data-retention controls, monitoring, and formal threat review.
+
+
+
+## Evidence-backed briefing extension
+
+`POST /api/summary` accepts identity and review-date input, reruns the manager check,
+and builds its own report. Browser-supplied reports and authorization flags are not used.
+`summary.py` extracts cited account notices, review findings, and suggestions.
+An optional Ollama adapter proposes an ordering of those evidence IDs; validation
+requires an exact permutation. The server always renders original evidence text.
+No model result can change access, draft selections, authorization, or findings.
+The default needs no model. Failures return all evidence in deterministic order.
+See [AI_BRIEFING.md](AI_BRIEFING.md) for evaluation and limits.
