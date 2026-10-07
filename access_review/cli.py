@@ -16,7 +16,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Create an explainable access review from a synthetic snapshot."
     )
-    parser.add_argument("snapshot", type=Path, help="Path to the JSON snapshot")
+    parser.add_argument("snapshot", type=Path, help="Path to a synthetic JSON snapshot used for this learning demo")
     parser.add_argument("--user", required=True, help="Employee user ID")
     parser.add_argument(
         "--manager", required=True, help="Requester ID; must match direct manager in AD and Entra ID"
@@ -67,7 +67,7 @@ def format_text_report(report: dict[str, Any]) -> str:
             f"Role: {employee['job_title']} | Department: {employee['department']} | "
             f"Location: {employee['office_location']}"
         ),
-        f"Authorized manager: {report['authorization']['requester_id']} (AD + Entra ID)",
+        f"Simulated manager match: {report['authorization']['requester_id']} (synthetic AD + Entra ID data)",
         "",
         "AD account",
         f"- Status: {account['status']}",
