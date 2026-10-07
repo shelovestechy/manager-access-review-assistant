@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from datetime import date
 from pathlib import Path
 
@@ -41,6 +42,19 @@ class AnalyzerTests(unittest.TestCase):
         with self.assertRaisesRegex(PermissionError, "both AD and Entra ID"):
             analyze_access(
                 self.snapshot, "matti.meikalainen", "other.manager", as_of=AS_OF
+            )
+
+    def test_conflicting_ad_and_entra_manager_records_fail_closed(self) -> None:
+        employee = replace(
+            self.snapshot.employees[0], entra_manager_id="other.manager"
+        )
+        conflicting_snapshot = replace(self.snapshot, employees=(employee,))
+        with self.assertRaisesRegex(PermissionError, "both AD and Entra ID"):
+            analyze_access(
+                conflicting_snapshot,
+                "matti.meikalainen",
+                MANAGER,
+                as_of=AS_OF,
             )
 
     def test_account_expiry_warns_within_ninety_days(self) -> None:
