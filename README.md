@@ -229,3 +229,21 @@ See the [Finnish scenario catalogue and account list](scenarios/README.md) for e
 case, expected outcome and runnable commands. Cases are synthetic alternatives,
 not a historical audit trail. The original five model-ordering evaluation cases
 remain separate from these functional acceptance tests.
+
+## Choose a case in the browser
+
+Run `python -m access_review.web` from the source checkout. The Ankkalinna case
+selector loads all 22 standalone scenarios and opens the selected review with
+its sample employee, manager and date. The empty option keeps the configured
+snapshot and manual identity fields. Denial/error scenarios deliberately show an
+error rather than a report. Navigation links connect current access, attention
+items and the Service Desk request. Account-expiry notice drafts are now visible.
+
+The catalogue is synthetic demo metadata, not a production employee directory.
+Scenario IDs select server-loaded fixtures; HTTP callers cannot provide file paths.
+Every review, briefing and draft reruns authorization against the selected fixture.
+When `scenarios/cases.json` is absent (for example a wheel-only installation), the
+manual snapshot workflow remains available and the catalogue is empty.
+
+GitHub Actions now includes `scripts/browser-smoke.cjs` to exercise all cases,
+mobile overflow, briefings, drafts and stale-response handling with Chromium.

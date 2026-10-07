@@ -14,6 +14,7 @@ reviewForm.addEventListener("submit", async (event) => {
   currentReview = null;
   reviewPayload = null;
   reviewGeneration += 1;
+  const generation = reviewGeneration;
   reviewSection.hidden = true;
   document.querySelector("#summary-result").hidden = true;
   document.querySelector("#summary-button").disabled = false;
@@ -23,16 +24,19 @@ reviewForm.addEventListener("submit", async (event) => {
   try {
     const payload = basePayload();
     const report = await postJson("/api/review", payload);
+    if (generation !== reviewGeneration) return;
     reviewPayload = payload;
     currentReview = report;
     renderReview(report);
     reviewSection.hidden = false;
     reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
+    if (generation !== reviewGeneration) return;
     currentReview = null;
     reviewSection.hidden = true;
     showMessage(error.message);
   } finally {
+    if (generation !== reviewGeneration) return;
     button.disabled = false;
     button.innerHTML = "Open access review <span aria-hidden='true'>→</span>";
   }
@@ -42,6 +46,7 @@ draftForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   hideMessage();
   if (!currentReview) return;
+  const generation = reviewGeneration;
   const additions = selectedValues("addition");
   const removals = selectedValues("removal");
   if (!additions.length && !removals.length) {
@@ -55,11 +60,12 @@ draftForm.addEventListener("submit", async (event) => {
       removals,
       reason: document.querySelector("#reason").value.trim(),
     });
+    if (generation !== reviewGeneration) return;
     document.querySelector("#draft-text").textContent = response.draft;
     draftResult.hidden = false;
     draftResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
   } catch (error) {
-    showMessage(error.message);
+    if (generation === reviewGeneration) showMessage(error.message);
   }
 });
 
@@ -71,6 +77,7 @@ document.querySelector("#copy-draft").addEventListener("click", async (event) =>
 
 function basePayload() {
   return {
+    scenario_id: document.querySelector("#scenario-select").value,
     requester_id: document.querySelector("#manager-id").value.trim(),
     user_id: document.querySelector("#user-id").value.trim(),
     as_of: document.querySelector("#as-of").value,
@@ -105,6 +112,8 @@ function renderReview(report) {
 }
 
 function renderAccount(account) {
+  document.querySelector("#expiry-request").hidden = !account.service_desk_notice_draft;
+  document.querySelector("#expiry-draft").textContent = account.service_desk_notice_draft || "";
   document.querySelector("#account-expiry").textContent = account.ad_account_expires_at || "Not configured";
   document.querySelector("#days-remaining").textContent = account.days_remaining ?? "—";
   document.querySelector("#contract-end").textContent = account.contract_end_date || "Not available";
@@ -243,4 +252,24 @@ document.querySelector("#summary-button").addEventListener("click", async () => 
   } finally {
     if (generation === reviewGeneration) button.disabled = false;
   }
+});
+
+
+const scenarioSelect = document.querySelector("#scenario-select");
+let demoScenarios = [];
+fetch("/api/demo-scenarios").then(async (response) => {
+  if (!response.ok) throw new Error("Case list unavailable; you can still enter the demo identities.");
+  const data = await response.json();
+  demoScenarios = data.scenarios;
+  demoScenarios.forEach((scenario) => scenarioSelect.append(element("option", {value: scenario.id}, scenario.title)));
+  document.querySelector("#scenario-status").textContent = `${demoScenarios.length} Ankkalinnan esimerkkitapausta`;
+}).catch((error) => { document.querySelector("#scenario-status").textContent = error.message; });
+
+scenarioSelect.addEventListener("change", () => {
+  const scenario = demoScenarios.find((item) => item.id === scenarioSelect.value);
+  document.querySelector("#manager-id").value = scenario ? scenario.manager : "roope.ankka";
+  document.querySelector("#user-id").value = scenario ? scenario.employee : "aku.ankka";
+  document.querySelector("#as-of").value = scenario ? scenario.review_date : "2026-10-07";
+  document.querySelector("#reason").value = "";
+  reviewForm.requestSubmit();
 });

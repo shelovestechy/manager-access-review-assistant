@@ -159,3 +159,12 @@ footer { border-top: 1px solid var(--line); color: var(--muted); display: flex; 
   .access-item > :nth-child(3), .access-item > :nth-child(4) { grid-column: 1 / -1; }
   footer { flex-direction: column; gap: 5px; }
 }
+
+
+/* Scenario navigation stays readable on narrow screens. */
+select { width: 100%; min-width: 0; padding: 12px; border: 1px solid #cad4ce; border-radius: 10px; background: white; color: #24362d; font: inherit; }
+.review-steps { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.review-steps a { color: #24533b; padding: 10px 14px; border: 1px solid #cad4ce; border-radius: 10px; text-decoration: none; }
+#expiry-request { grid-column: 1 / -1; min-width: 0; }
+#expiry-draft { color: var(--navy); white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; padding: 16px; background: #f3f6f3; border-radius: 12px; }
+#inventory, #attention, #request { scroll-margin-top: 20px; }

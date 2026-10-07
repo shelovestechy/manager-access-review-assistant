@@ -30,3 +30,8 @@
 - Added 12-employee Ankkalinna organization snapshot and 22 standalone acceptance scenarios.
 - Added explicit expected outcomes, denial/error cases, account-expiry boundaries and data-isolation tests.
 - Added Finnish scenario catalogue with demo identities, commands and feature limitations.
+
+- Added 22-case browser selector with server-side fixture allowlist and repeated authorization.
+- Added review navigation and visible expiry verification drafts.
+- Guarded delayed review/draft responses when switching scenarios.
+- Added API isolation tests and Chromium CI smoke coverage.

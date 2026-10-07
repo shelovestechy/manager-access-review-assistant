@@ -3,6 +3,14 @@
 Organisaatio: **Ankkalinna Identity Lab Oy**. Kaikki tiedot ovat kuvitteellisia.
 Esimerkeissä käytetään arviointipäivää **7.10.2026**, jotta päivämäärärajojen tulokset pysyvät toistettavina.
 
+## Valitse tapaus yhdellä valinnalla
+
+Käynnistä lähdekoodihakemistosta `python -m access_review.web` ja avaa
+`http://127.0.0.1:8000`. Valitse **Ankkalinnan esimerkkitapaus**: tunnukset ja
+päivä täytetään automaattisesti ja tarkistus avautuu. Estettävät tapaukset näyttävät
+virheilmoituksen tarkoituksella. Valikko käyttää erillisiä tapaustiedostoja;
+tyhjä valinta palauttaa palvelimelle määritellyn snapshotin.
+
 ## Koko organisaation demo
 
 Käynnistä repon juuresta:
@@ -107,4 +115,4 @@ työntekijän oikeuksien erillisyys ja Hansun esihenkilörajaus.
 Viisi aiempaa AI-järjestyksen arviointitapausta säilyvät kansiossa `evaluation/`.
 Nämä 22 uutta tapausta testaavat toiminnallisuutta; niitä ei esitetä mitattuna AI-laatuna.
 
-**Validointi:** 61 testiä läpäisty. Oikean mallin arviointi ja selainulkoasun tarkistus ovat edelleen avoinna.
+**Validointi:** 64 testiä läpäisty. Oikean mallin arviointi ja selainulkoasun tarkistus ovat edelleen avoinna.

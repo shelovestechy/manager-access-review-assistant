@@ -115,6 +115,39 @@ class WebDemoTests(unittest.TestCase):
         self.assertEqual(body["mode"], "deterministic")
         self.assertEqual(len(body["evidence"]), 6)
 
+    def test_scenario_catalogue_contains_cases_without_file_paths(self):
+        with urlopen(f"{self.base_url}/api/demo-scenarios") as response:
+            body = json.loads(response.read())
+        self.assertEqual(len(body["scenarios"]), 22)
+        hansu = next(x for x in body["scenarios"] if x["id"] == "hansu-seasonal")
+        self.assertEqual(hansu["manager"], "mummo.ankka")
+        self.assertNotIn("snapshot", hansu)
+        self.assertNotIn("expected", hansu)
+
+    def test_scenario_selection_applies_to_review_briefing_and_draft(self):
+        payload = {"scenario_id": "hannu-legacy-finance", "user_id": "hannu.hanhi",
+                   "requester_id": "roope.ankka", "as_of": "2026-10-07"}
+        status, report = self.post("/api/review", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(report["employee"]["display_name"], "Hannu Hanhi")
+        status, brief = self.post("/api/summary", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(brief["metrics"]["evidence_count"], 2)
+        status, draft = self.post("/api/service-desk-draft", dict(payload, additions=["Ankkalinna-Sales-CRM"], reason="Changed role"))
+        self.assertEqual(status, 200)
+        self.assertIn("Hannu Hanhi", draft["draft"])
+
+    def test_scenario_cannot_bypass_authorization_or_name_arbitrary_files(self):
+        payload = {"scenario_id": "hansu-wrong-manager", "user_id": "hansu.hanhi", "requester_id": "roope.ankka"}
+        for endpoint in ("/api/review", "/api/summary", "/api/service-desk-draft"):
+            status, body = self.post(endpoint, payload)
+            self.assertEqual(status, 403)
+            self.assertNotIn("employee", body)
+        for scenario in ("../../etc/passwd", "missing-case", ["hansu-seasonal"]):
+            status, body = self.post("/api/review", dict(payload, scenario_id=scenario))
+            self.assertEqual(status, 400)
+            self.assertNotIn("employee", body)
+
     def post(self, path: str, payload: dict) -> tuple[int, dict]:
         request = Request(
             f"{self.base_url}{path}",
