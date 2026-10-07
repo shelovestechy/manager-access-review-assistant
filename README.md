@@ -1,8 +1,21 @@
 # Manager Access Review Assistant
 
-An explainable, human-in-the-loop prototype that helps a verified direct manager understand an employee's accumulated access and prepare a request for ICT or Service Desk.
+An explainable, human-in-the-loop **learning and portfolio prototype** for exploring IAM, security, automation and bounded AI-assisted decision support.
 
-> **Project status:** Portfolio demo with an evidence-backed briefing. The default uses synthetic JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a tenant, open tickets, or change access.
+> **Project status:** Design-and-testing stage. This repository is a learning project, not a production IAM system or a deployed enterprise service. The current demo uses only synthetic Ankkalinna JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a real tenant, authenticate real users, open tickets, or change access.
+
+## What I am learning with this project
+
+This project is a practical study of how IAM, security and automation could meet in one bounded workflow. I am using it to learn and document:
+
+- identity governance and access-review thinking;
+- safe authorization boundaries and fail-closed design;
+- separation of read-only evidence from access decisions;
+- Service Desk and IAM workflow automation;
+- testable Python application structure and browser/API behavior;
+- responsible use of AI where deterministic evidence remains authoritative.
+
+The architecture documents include ideas for possible future lab integrations. Those sections are **design exercises**, not claims of production implementation or professional IAM engineering experience.
 
 
 
@@ -23,9 +36,9 @@ This project brings those signals into one report. It highlights items that dese
 
 The assistant cannot grant, remove, approve, or deny access. It cannot submit a ticket. The verified manager chooses what to request, and ICT or Service Desk validates and implements the change through the organization's normal process.
 
-## Why the v1.0 baseline is deterministic
+## Why the prototype baseline is deterministic
 
-Identity decisions are high-impact. Version 1.0 therefore keeps authorization, expiry calculation, anomaly flags, and access-profile matching deterministic and testable. This is the evidence layer an AI summary can safely sit on top of later.
+Identity decisions are high-impact. The current prototype therefore keeps authorization, expiry calculation, anomaly flags, and access-profile matching deterministic and testable. This is the evidence layer an AI summary can safely sit on top of later.
 
 The optional language-model layer orders existing findings for a manager briefing. It returns evidence IDs only; the server validates that every ID appears exactly once and renders the original facts. It cannot generate new access facts, omit findings, or call tools. Without a model, or if its output is invalid, a deterministic briefing remains available. This is AI-assisted evidence ordering, not free-form generative summarization.
 
@@ -48,11 +61,13 @@ The MVP demonstrates this check with synthetic attributes. A live version must p
 
 Suggestions are candidates for review, not entitlements the employee automatically deserves.
 
-## From demo to a real deployment
+## Design notes for a possible future deployment
 
-Read the **[Finnish deployment guide](docs/DEPLOYMENT_FI.md)** for a practical rollout plan, the separation between user authorization and connector permissions, Graph/AD/Exchange read-only requirements, and an optional Copilot Studio interface. This is a proposed architecture; live integrations and authenticated login are not implemented in the current demo.
+Read the **[Finnish future-deployment design notes](docs/DEPLOYMENT_FI.md)** for a study of how a real implementation might separate user authorization, connector permissions, Graph/AD/Exchange read-only access and an optional Copilot Studio interface. This is architecture planning for learning purposes; live integrations, authenticated login and production deployment are not implemented in the current demo.
 
 ## Run the browser demo
+
+> **Safe demo boundary:** Run this only with the synthetic data included in this repository. No Microsoft 365 tenant, Entra ID, Active Directory, employee data, API credentials or production access is required or expected.
 
 Requirements: Python 3.11 or newer. No third-party packages are required.
 
@@ -172,7 +187,7 @@ An access suggestion is shown only when all attributes defined by a documented a
 
 See [SECURITY.md](SECURITY.md) for the threat model.
 
-## Completed v1.0 scope
+## Completed prototype scope
 
 - [x] Synthetic data model, explainable analysis, CLI, and tests
 - [x] Dual-source direct-manager authorization check
@@ -194,7 +209,7 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 - [ ] Free-form grounded summaries, if justified by evaluation
 - [ ] Audit logging, role-based access, and review export
 
-These integrations are deliberately outside the synthetic portfolio demo. They require a dedicated lab tenant, explicit permission review, and tenant-specific configuration; the demo is complete and usable without them.
+These integrations are deliberately outside the synthetic portfolio demo. They are future learning work and would require a dedicated lab tenant, explicit permission review, authentication design and tenant-specific configuration. The current repository demonstrates the concept without them.
 
 ## Portfolio talking points
 
@@ -207,7 +222,7 @@ These integrations are deliberately outside the synthetic portfolio demo. They r
 
 ## Disclaimer
 
-This is a portfolio and lab project, not a production authorization system. Findings and suggestions may contain false positives. A qualified human reviewer is responsible for every request and access decision.
+This is a self-directed learning, portfolio and lab project for studying IAM, security, automation and bounded AI assistance. It is not a production authorization system, a deployed access-review service, or evidence of production IAM engineering experience. The included identities and access data are fictional. Findings and suggestions may contain false positives, and any real-world access decision would require approved organizational policy, authoritative data and qualified human review.
 
 
 ## Repeatable Ankkalinna evaluation
