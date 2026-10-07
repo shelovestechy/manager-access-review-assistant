@@ -4,7 +4,14 @@ An explainable, human-in-the-loop prototype that helps a verified direct manager
 
 > **Project status:** Portfolio demo with an evidence-backed briefing. The default uses synthetic JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a tenant, open tickets, or change access.
 
-![Manager access review dashboard](docs/overview.png)
+*The existing screenshot predates the Ankkalinna naming and briefing changes; it will be refreshed after browser QA.*
+
+## Demo organization
+
+All employees and resources belong to the fictional **Ankkalinna Identity Lab Oy**.
+The employee is **Aku Ankka** (`aku.ankka`) and the manager is **Roope Ankka**
+(`roope.ankka`). Office: **Ankkalinna**. Email addresses use the reserved
+`ankkalinna.example.invalid` domain. No real employee or tenant data is included.
 
 ## Why this project exists
 
@@ -51,8 +58,8 @@ python -m access_review.web
 
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000) and use the pre-filled synthetic identities:
 
-- manager: `liisa.esihenkilo`
-- employee: `matti.meikalainen`
+- manager: `roope.ankka`
+- employee: `aku.ankka`
 - review date: `2026-10-07`
 
 The browser application supports the complete demo flow: manager verification, access inventory, account-expiry warning, attribute-based suggestions, and a copyable Service Desk draft. It runs on localhost. By default it makes no model calls. Select **Prepare briefing** after opening a review to see cited findings and timing.
@@ -77,8 +84,8 @@ The same analysis is available as a command-line report:
 
 ```powershell
 python -m access_review access_review/demo_data/sample_access_snapshot.json `
-  --user matti.meikalainen `
-  --manager liisa.esihenkilo `
+  --user aku.ankka `
+  --manager roope.ankka `
   --as-of 2026-10-07
 ```
 
@@ -86,11 +93,11 @@ Create an example Service Desk request draft:
 
 ```powershell
 python -m access_review access_review/demo_data/sample_access_snapshot.json `
-  --user matti.meikalainen `
-  --manager liisa.esihenkilo `
+  --user aku.ankka `
+  --manager roope.ankka `
   --as-of 2026-10-07 `
   --draft-add HR-Case-Management-Users `
-  --draft-remove Finance-Admin `
+  --draft-remove Rahasailio-Admin `
   --reason "Align access with current HR duties."
 ```
 
@@ -198,3 +205,10 @@ These integrations are deliberately outside the synthetic portfolio demo. They r
 
 This is a portfolio and lab project, not a production authorization system. Findings and suggestions may contain false positives. A qualified human reviewer is responsible for every request and access decision.
 
+
+## Repeatable Ankkalinna evaluation
+
+Five synthetic scenarios now exercise department transfer, imminent expiry, mixed
+findings, untrusted directory text, and empty evidence. Run
+`python -m access_review.evaluate` from the repository root. See
+[evaluation instructions and baseline](evaluation/README.md).

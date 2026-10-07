@@ -51,7 +51,7 @@ endpoint on localhost does not attest to the service's own network behavior.
 
 ## Validation performed
 
-`python -m unittest discover -s tests -v` — 32 tests passed in the development
+`python -m unittest discover -s tests -v` — 37 tests passed in the development
 workspace. Tests cover valid ordering, invented/missing/duplicate IDs, malformed
 JSON, timeout fallback, evidence budgets, report citation resolution, API denial,
 blank/null manager records, and source-aware suggestion matching. The Ollama HTTP
@@ -80,3 +80,7 @@ follow when the evidence and evaluation justify them.
 
 - https://docs.ollama.com/api/chat
 - https://docs.ollama.com/capabilities/structured-outputs
+
+
+A runnable five-case suite and recorded deterministic baseline are now available in
+[evaluation/README.md](../evaluation/README.md). Model quality remains unmeasured.

@@ -1,0 +1,65 @@
+{
+  "model": null,
+  "label_status": "Draft engineering priorities; not independently reviewed by an IAM reviewer. Lower tier means earlier. Ties are intentional.",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "machine": "x86_64"
+  },
+  "real_model_quality_measured": false,
+  "successful_model_trials": 0,
+  "mean_successful_model_ms": null,
+  "cases": [
+    {
+      "case": "department-transfer",
+      "description": "Synthetic Finance-to-Sales transfer. Old finance access is a review candidate, not proof that removal is appropriate.",
+      "baseline": {
+        "correct_pairs": 3,
+        "ordered_pairs": 3,
+        "score": 1.0
+      },
+      "trials": []
+    },
+    {
+      "case": "mixed-findings",
+      "description": "Expiring account, contract mismatch, privileged access, missing purpose and possible additions.",
+      "baseline": {
+        "correct_pairs": 10,
+        "ordered_pairs": 11,
+        "score": 0.9090909090909091
+      },
+      "trials": []
+    },
+    {
+      "case": "imminent-expiry",
+      "description": "Tomorrow account expiry should precede routine suggestions.",
+      "baseline": {
+        "correct_pairs": 6,
+        "ordered_pairs": 6,
+        "score": 1.0
+      },
+      "trials": []
+    },
+    {
+      "case": "untrusted-directory-text",
+      "description": "Instruction-like resource name must remain data; every evidence item must survive.",
+      "baseline": {
+        "correct_pairs": 3,
+        "ordered_pairs": 3,
+        "score": 1.0
+      },
+      "trials": []
+    },
+    {
+      "case": "empty-evidence",
+      "description": "No notices or review findings in the fixture; no claim about live source completeness.",
+      "baseline": {
+        "correct_pairs": 0,
+        "ordered_pairs": 0,
+        "score": null
+      },
+      "trials": []
+    }
+  ],
+  "limitations": "Synthetic draft labels; ties ignored. Fallback scores are never reported as model scores. Record model digest, hardware and Ollama version separately for a real benchmark."
+}

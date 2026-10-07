@@ -29,7 +29,7 @@ class FakeRanker:
 class SummaryTests(unittest.TestCase):
     def setUp(self):
         self.snapshot = load_snapshot(FIXTURE)
-        self.report = analyze_access(self.snapshot, 'matti.meikalainen', 'liisa.esihenkilo', as_of=date(2026, 10, 7))
+        self.report = analyze_access(self.snapshot, 'aku.ankka', 'roope.ankka', as_of=date(2026, 10, 7))
 
     def test_offline_summary_contains_all_findings_and_resolvable_citations(self):
         summary = summarize_report(self.report)
@@ -93,9 +93,9 @@ class SummaryTests(unittest.TestCase):
                 analyze_access(replace(self.snapshot, employees=(employee,)), employee.user_id, value)
 
     def test_same_name_in_different_source_does_not_hide_suggestion(self):
-        existing = Entitlement('matti.meikalainen', 'Other', 'group', 'HR-Case-Management-Users', 'direct')
+        existing = Entitlement('aku.ankka', 'Other', 'group', 'HR-Case-Management-Users', 'direct')
         snapshot = replace(self.snapshot, entitlements=self.snapshot.entitlements + (existing,))
-        report = analyze_access(snapshot, 'matti.meikalainen', 'liisa.esihenkilo')
+        report = analyze_access(snapshot, 'aku.ankka', 'roope.ankka')
         self.assertIn('HR-Case-Management-Users', [s['name'] for s in report['access_suggestions']])
 
     @patch('access_review.summary.build_opener')

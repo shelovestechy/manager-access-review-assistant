@@ -20,7 +20,9 @@
       "name": "HR-Employees",
       "assignment": "direct",
       "purpose": "Core HR application access",
-      "expected_departments": ["Human Resources"],
+      "expected_departments": [
+        "Human Resources"
+      ],
       "risk_tags": []
     },
     {
@@ -30,7 +32,9 @@
       "name": "HR-Shared-Drive-Read",
       "assignment": "transitive",
       "purpose": "Read access to the HR shared drive",
-      "expected_departments": ["Human Resources"],
+      "expected_departments": [
+        "Human Resources"
+      ],
       "risk_tags": []
     },
     {
@@ -40,7 +44,9 @@
       "name": "henkilosto@ankkalinna.example.invalid",
       "assignment": "direct",
       "purpose": "Handle incoming employee requests",
-      "expected_departments": ["Human Resources"],
+      "expected_departments": [
+        "Human Resources"
+      ],
       "risk_tags": []
     },
     {
@@ -61,8 +67,12 @@
       "name": "Rahasailio-Admin",
       "assignment": "direct",
       "purpose": "Administer finance application settings",
-      "expected_departments": ["Finance"],
-      "risk_tags": ["privileged"]
+      "expected_departments": [
+        "Finance"
+      ],
+      "risk_tags": [
+        "privileged"
+      ]
     },
     {
       "user_id": "aku.ankka",
@@ -71,15 +81,21 @@
       "name": "Legacy-HR-Archive",
       "assignment": "direct",
       "purpose": "",
-      "expected_departments": ["Human Resources"],
+      "expected_departments": [
+        "Human Resources"
+      ],
       "risk_tags": []
     }
   ],
   "access_profiles": [
     {
       "name": "HR specialist baseline",
-      "job_titles": ["HR Specialist"],
-      "departments": ["Human Resources"],
+      "job_titles": [
+        "HR Specialist"
+      ],
+      "departments": [
+        "Human Resources"
+      ],
       "suggestions": [
         {
           "name": "HR-Case-Management-Users",
@@ -91,7 +107,9 @@
     },
     {
       "name": "Ankkalinna office baseline",
-      "office_locations": ["Ankkalinna"],
+      "office_locations": [
+        "Ankkalinna"
+      ],
       "suggestions": [
         {
           "name": "Ankkalinna-Office-Employees",
@@ -103,4 +121,3 @@
     }
   ]
 }
-

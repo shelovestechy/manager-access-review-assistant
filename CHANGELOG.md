@@ -22,3 +22,7 @@
 - Reject blank/non-string manager identities and avoid cross-source suggestion-name collisions.
 - Bind draft and briefing requests to the opened review's identities.
 - Added regression, model-contract, transport, and API authorization tests.
+
+- Standardized demo identities and locations to Aku Ankka, Roope Ankka and Ankkalinna.
+- Added five labelled evaluation scenarios, pairwise scoring and an offline baseline.
+- Do not credit fallback output as successful model evaluation.

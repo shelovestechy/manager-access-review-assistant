@@ -1,0 +1,62 @@
+{
+  "employees": [
+    {
+      "user_id": "aku.ankka",
+      "display_name": "Aku Ankka",
+      "job_title": "Sales Specialist",
+      "department": "Sales",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "aku.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Rahasailio-Admin",
+      "assignment": "direct",
+      "purpose": "Administer finance settings",
+      "expected_departments": [
+        "Finance"
+      ],
+      "risk_tags": [
+        "privileged"
+      ]
+    },
+    {
+      "user_id": "aku.ankka",
+      "source": "Exchange Online",
+      "resource_type": "shared_mailbox",
+      "name": "rahasailio-laskut@ankkalinna.example.invalid",
+      "assignment": "direct",
+      "purpose": "Process finance invoices",
+      "expected_departments": [
+        "Finance"
+      ],
+      "risk_tags": []
+    }
+  ],
+  "access_profiles": [
+    {
+      "name": "Sales specialist baseline",
+      "job_titles": [
+        "Sales Specialist"
+      ],
+      "departments": [
+        "Sales"
+      ],
+      "suggestions": [
+        {
+          "name": "Sales-CRM-Users",
+          "source": "Entra ID",
+          "resource_type": "security_group",
+          "purpose": "Work with sales opportunities"
+        }
+      ]
+    }
+  ]
+}
