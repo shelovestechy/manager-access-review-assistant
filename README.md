@@ -48,6 +48,10 @@ The MVP demonstrates this check with synthetic attributes. A live version must p
 
 Suggestions are candidates for review, not entitlements the employee automatically deserves.
 
+## From demo to a real deployment
+
+Read the **[Finnish deployment guide](docs/DEPLOYMENT_FI.md)** for a practical rollout plan, the separation between user authorization and connector permissions, Graph/AD/Exchange read-only requirements, and an optional Copilot Studio interface. This is a proposed architecture; live integrations and authenticated login are not implemented in the current demo.
+
 ## Run the browser demo
 
 Requirements: Python 3.11 or newer. No third-party packages are required.
