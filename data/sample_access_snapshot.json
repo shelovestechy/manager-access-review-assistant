@@ -5,7 +5,11 @@
       "display_name": "Matti Meikäläinen",
       "job_title": "HR Specialist",
       "department": "Human Resources",
-      "manager_id": "liisa.esihenkilo"
+      "office_location": "Helsinki",
+      "ad_manager_id": "liisa.esihenkilo",
+      "entra_manager_id": "liisa.esihenkilo",
+      "ad_account_expires_at": "2026-12-15",
+      "contract_end_date": "2027-06-30"
     }
   ],
   "entitlements": [
@@ -69,6 +73,33 @@
       "purpose": "",
       "expected_departments": ["Human Resources"],
       "risk_tags": []
+    }
+  ],
+  "access_profiles": [
+    {
+      "name": "HR specialist baseline",
+      "job_titles": ["HR Specialist"],
+      "departments": ["Human Resources"],
+      "suggestions": [
+        {
+          "name": "HR-Case-Management-Users",
+          "source": "Entra ID",
+          "resource_type": "security_group",
+          "purpose": "Access to the HR case management application"
+        }
+      ]
+    },
+    {
+      "name": "Helsinki office baseline",
+      "office_locations": ["Helsinki"],
+      "suggestions": [
+        {
+          "name": "Helsinki-Office-Employees",
+          "source": "Active Directory",
+          "resource_type": "security_group",
+          "purpose": "Access to Helsinki office resources"
+        }
+      ]
     }
   ]
 }

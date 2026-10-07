@@ -1,58 +1,62 @@
 # Manager Access Review Assistant
 
-An explainable, human-in-the-loop prototype that helps managers review an employee's accumulated access across Microsoft identity and collaboration services.
+An explainable, human-in-the-loop prototype that helps a verified direct manager understand an employee's accumulated access and prepare a request for ICT or Service Desk.
 
-> **Project status:** Phase 1 MVP. The current version uses synthetic JSON data and a deterministic rule engine. It does not connect to a tenant, call a language model, or change access.
+> **Project status:** Phase 1 MVP. The current version uses synthetic JSON data and a deterministic rule engine. It does not connect to a tenant, call a language model, open tickets, or change access.
 
 ## Why this project exists
 
-Managers often need to approve access without having one clear view of what an employee already has. Relevant permissions may be spread across Entra ID, Active Directory, Microsoft 365 groups, distribution groups, shared mailboxes, Teams, and SharePoint.
+Managers often need to review access without having one clear view of what an employee already has. Relevant permissions may be spread across Entra ID, Active Directory, Microsoft 365 groups, distribution groups, shared mailboxes, Teams, and SharePoint.
 
-This project collects those signals into a single review report. It separates expected access, organization-wide access, and items that deserve human review. Every finding includes evidence; the assistant never removes access or makes the approval decision.
+This project brings those signals into one report. It highlights items that deserve human review, warns about an approaching AD account expiry, proposes possible missing access from documented role and location profiles, and creates a Service Desk request draft when the manager explicitly selects a change.
 
-## Example
+## Non-negotiable boundary
 
-```text
-Access review: Matti Meikäläinen
-Role: HR Specialist | Department: Human Resources
+The assistant cannot grant, remove, approve, or deny access. It cannot submit a ticket. The verified manager chooses what to request, and ICT or Service Desk validates and implements the change through the organization's normal process.
 
-6 access items found
-- 3 appear role-aligned
-- 1 is organization-wide
-- 2 require review
+## Manager authorization
 
-Review findings
-- Finance-Admin: department mismatch, privileged access
-- Legacy-HR-Archive: access purpose is missing
-```
+A requester receives the report only when the requester is recorded as the employee's direct manager in **both** AD and Entra ID. Missing or conflicting manager data fails closed.
 
-## Security principles
+The MVP demonstrates this check with synthetic attributes. A live version must perform the same check server-side using freshly collected identity data; a manager ID supplied by the browser must never be trusted on its own.
 
-- Read-only by design
-- Least-privilege permissions for every data source
-- Human approval remains mandatory
-- Evidence is shown for every flag
-- No automatic access removal
-- No production or personal data in the repository
-- Synthetic test data only in the MVP
+## Example capabilities
 
-See [SECURITY.md](SECURITY.md) for the threat model and the planned Microsoft Graph permission approach.
+- Classify current access as role-aligned, organization-wide, or requiring review.
+- Distinguish direct and transitive membership.
+- Show the AD account expiry date and warn when it is 90 days or less away.
+- Compare account expiry with the recorded contract end date.
+- Create an informational Service Desk draft when dates should be verified.
+- Suggest possible missing groups based on job title, department, or office location.
+- Explain the exact attributes behind each suggestion.
+- Create an addition/removal request draft only from changes explicitly chosen by the manager.
+
+Suggestions are candidates for review, not entitlements the employee automatically deserves.
 
 ## Run the MVP
 
 Requirements: Python 3.11 or newer. No third-party packages are required.
 
 ```powershell
-python -m access_review data/sample_access_snapshot.json --user matti.meikalainen
+python -m access_review data/sample_access_snapshot.json `
+  --user matti.meikalainen `
+  --manager liisa.esihenkilo `
+  --as-of 2026-10-07
 ```
 
-For machine-readable output:
+Create an example Service Desk request draft:
 
 ```powershell
-python -m access_review data/sample_access_snapshot.json --user matti.meikalainen --json
+python -m access_review data/sample_access_snapshot.json `
+  --user matti.meikalainen `
+  --manager liisa.esihenkilo `
+  --as-of 2026-10-07 `
+  --draft-add HR-Case-Management-Users `
+  --draft-remove Finance-Admin `
+  --reason "Align access with current HR duties."
 ```
 
-Run the tests:
+Add `--json` for machine-readable output. Run tests with:
 
 ```powershell
 python -m unittest discover -s tests -v
@@ -61,53 +65,79 @@ python -m unittest discover -s tests -v
 ## Architecture
 
 ```text
-Synthetic JSON snapshot
-        |
-        v
-Validated data loader
-        |
-        v
-Explainable rule engine
-        |
-        v
-Manager-friendly report (text or JSON)
+Verified manager identity
+          |
+          v
+AD manager + Entra manager check ---- mismatch ---> deny
+          |
+          v
+Read-only identity snapshot
+          |
+          +--> current access analysis
+          +--> AD account expiry warning
+          +--> attribute-based suggestions
+          |
+          v
+Manager-friendly report
+          |
+          v
+Optional Service Desk draft ----> human validation and implementation
 ```
 
-The code keeps collection, analysis, and presentation separate so that synthetic data can later be replaced by Microsoft Graph and lab Active Directory adapters without changing the review logic.
+Collection, authorization, analysis, and presentation are kept separate so synthetic data can later be replaced by Microsoft Graph and lab Active Directory adapters without making the analysis layer capable of changing access.
 
-## Current review rules
+## Current deterministic rules
 
-An access item is flagged when one or more of these conditions apply:
+An existing access item is flagged when:
 
-- the employee's department is not in the entitlement's expected departments;
+- the employee's department is outside the entitlement's expected departments;
 - the entitlement is tagged as privileged;
-- the entitlement has no documented business purpose;
+- the entitlement has no documented business purpose; or
 - the entitlement is marked dormant.
 
-Organization-wide access is reported separately to reduce noise. The rules are intentionally conservative: a flag means **review**, never **remove**.
+An account notice is produced when:
+
+- the AD account has expired;
+- the AD expiry date is at most 90 days away; or
+- the recorded contract end date is later than the AD account expiry.
+
+An access suggestion is shown only when all attributes defined by a documented access profile match and the employee does not already have the named access. Every suggestion still requires ICT or Service Desk validation.
+
+## Security principles
+
+- Read-only integrations only
+- Direct-manager match required in AD and Entra ID
+- Least-privilege permissions for every data source
+- Evidence shown for every flag and suggestion
+- No automatic remediation or ticket submission
+- Human approval and ICT validation remain mandatory
+- Synthetic data only in the repository
+
+See [SECURITY.md](SECURITY.md) for the threat model.
 
 ## Roadmap
 
-- [x] Phase 1: synthetic data model, explainable analysis, CLI, and tests
-- [ ] Phase 2: read-only Entra ID lab adapter using Microsoft Graph
-- [ ] Phase 3: distinguish direct and transitive group membership in collected data
-- [ ] Phase 4: AD DS, shared mailbox, and distribution-group adapters
-- [ ] Phase 5: manager-facing web UI or Copilot Studio tool
-- [ ] Phase 6: optional LLM summary grounded only in collected evidence
-- [ ] Phase 7: audit logging, role-based access, and review export
-
-## Planned Microsoft Graph scope
-
-The first live integration will use a dedicated lab tenant and read-only access. Permission selection will be documented and tested against least privilege before any tenant connection is added. Secrets and tenant identifiers must be provided through environment variables and must never be committed.
+- [x] Synthetic data model, explainable analysis, CLI, and tests
+- [x] Dual-source direct-manager authorization check
+- [x] AD account expiry warning and Service Desk notice draft
+- [x] Attribute-based access suggestions with evidence
+- [x] Explicit access-change request draft with a hard no-write boundary
+- [ ] Read-only Entra ID lab adapter using Microsoft Graph
+- [ ] Read-only AD DS lab adapter for manager and account-expiry attributes
+- [ ] Shared mailbox and distribution-group adapters
+- [ ] Manager-facing web UI or Copilot Studio tool
+- [ ] Optional LLM summary grounded only in collected evidence
+- [ ] Audit logging, role-based access, and review export
 
 ## Portfolio talking points
 
-- Identity governance and access-review thinking
-- Microsoft Graph and hybrid identity integration
+- Identity governance and hybrid IAM thinking
+- Microsoft Graph and AD integration planning
+- Authorization based on verified organizational relationships
 - Explainable decision support instead of autonomous authorization
+- Contract/account lifecycle mismatch detection
 - Least privilege, data minimization, and human oversight
-- Testable architecture that can evolve from mock data to live sources
 
 ## Disclaimer
 
-This is a portfolio and lab project, not a production authorization system. Findings are decision-support signals and may contain false positives. A qualified human reviewer is responsible for every access decision.
+This is a portfolio and lab project, not a production authorization system. Findings and suggestions may contain false positives. A qualified human reviewer is responsible for every request and access decision.

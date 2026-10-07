@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .models import Employee, Entitlement, Snapshot
+from .models import AccessProfile, Employee, Entitlement, Snapshot
 
 
 def load_snapshot(path: str | Path) -> Snapshot:
@@ -20,10 +20,14 @@ def load_snapshot(path: str | Path) -> Snapshot:
 
     employees = payload.get("employees")
     entitlements = payload.get("entitlements")
+    access_profiles = payload.get("access_profiles", [])
     if not isinstance(employees, list) or not isinstance(entitlements, list):
         raise ValueError("snapshot must contain employees and entitlements arrays")
+    if not isinstance(access_profiles, list):
+        raise ValueError("snapshot access_profiles must be an array")
 
     return Snapshot(
         employees=tuple(Employee.from_dict(item) for item in employees),
         entitlements=tuple(Entitlement.from_dict(item) for item in entitlements),
+        access_profiles=tuple(AccessProfile.from_dict(item) for item in access_profiles),
     )
