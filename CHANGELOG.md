@@ -26,3 +26,7 @@
 - Standardized demo identities and locations to Aku Ankka, Roope Ankka and Ankkalinna.
 - Added five labelled evaluation scenarios, pairwise scoring and an offline baseline.
 - Do not credit fallback output as successful model evaluation.
+
+- Added 12-employee Ankkalinna organization snapshot and 22 standalone acceptance scenarios.
+- Added explicit expected outcomes, denial/error cases, account-expiry boundaries and data-isolation tests.
+- Added Finnish scenario catalogue with demo identities, commands and feature limitations.

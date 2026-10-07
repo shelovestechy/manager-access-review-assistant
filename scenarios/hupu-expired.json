@@ -1,0 +1,31 @@
+{
+  "employees": [
+    {
+      "user_id": "hupu.ankka",
+      "display_name": "Hupu Ankka",
+      "job_title": "Project Assistant",
+      "department": "Projects",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2026-10-06",
+      "contract_end_date": "2026-10-06"
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "hupu.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Projektiarkisto",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Projects"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    }
+  ],
+  "access_profiles": []
+}

@@ -212,3 +212,20 @@ Five synthetic scenarios now exercise department transfer, imminent expiry, mixe
 findings, untrusted directory text, and empty evidence. Run
 `python -m access_review.evaluate` from the repository root. See
 [evaluation instructions and baseline](evaluation/README.md).
+
+## Expanded Ankkalinna scenario foundation
+
+The combined organization dataset contains **12 employees**, including Mikki Hiiri,
+Taavi Ankka and Hansu Hanhi. Hansu reports to Mummo Ankka; the other demo employees
+report to Roope Ankka. The standalone suite adds **22 acceptance cases** for joiners,
+role changes, seasonal work, inherited access, mail resources, lifecycle boundaries,
+manager conflicts, unauthorized requesters, and duplicate identity data.
+
+```powershell
+python -m access_review.web --snapshot access_review/demo_data/ankkalinna_organization.json
+```
+
+See the [Finnish scenario catalogue and account list](scenarios/README.md) for every
+case, expected outcome and runnable commands. Cases are synthetic alternatives,
+not a historical audit trail. The original five model-ordering evaluation cases
+remain separate from these functional acceptance tests.

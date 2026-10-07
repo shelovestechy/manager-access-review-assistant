@@ -1,0 +1,438 @@
+{
+  "employees": [
+    {
+      "user_id": "aku.ankka",
+      "display_name": "Aku Ankka",
+      "job_title": "HR Specialist",
+      "department": "Human Resources",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2026-12-15",
+      "contract_end_date": "2027-06-30"
+    },
+    {
+      "user_id": "mikki.hiiri",
+      "display_name": "Mikki Hiiri",
+      "job_title": "Security Analyst",
+      "department": "Security",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "taavi.ankka",
+      "display_name": "Taavi Ankka",
+      "job_title": "Research Specialist",
+      "department": "Research",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "job_title": "Seasonal Farm Assistant",
+      "department": "Farm",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "mummo.ankka",
+      "entra_manager_id": "mummo.ankka",
+      "ad_account_expires_at": "2026-10-14",
+      "contract_end_date": "2026-10-14"
+    },
+    {
+      "user_id": "iines.ankka",
+      "display_name": "Iines Ankka",
+      "job_title": "HR Specialist",
+      "department": "Human Resources",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2026-10-20",
+      "contract_end_date": "2027-06-30"
+    },
+    {
+      "user_id": "minni.hiiri",
+      "display_name": "Minni Hiiri",
+      "job_title": "Application Specialist",
+      "department": "Applications",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "hannu.hanhi",
+      "display_name": "Hannu Hanhi",
+      "job_title": "Sales Specialist",
+      "department": "Sales",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "pelle.peloton",
+      "display_name": "Pelle Peloton",
+      "job_title": "Engineer",
+      "department": "Engineering",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "leenu.ankka",
+      "display_name": "Leenu Ankka",
+      "job_title": "Communications Specialist",
+      "department": "Communications",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "tupu.ankka",
+      "display_name": "Tupu Ankka",
+      "job_title": "Trainee",
+      "department": "IT Training",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    },
+    {
+      "user_id": "hupu.ankka",
+      "display_name": "Hupu Ankka",
+      "job_title": "Project Assistant",
+      "department": "Projects",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2026-10-06",
+      "contract_end_date": "2026-10-06"
+    },
+    {
+      "user_id": "lupu.ankka",
+      "display_name": "Lupu Ankka",
+      "job_title": "Project Specialist",
+      "department": "Projects",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "aku.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "HR-Employees",
+      "assignment": "direct",
+      "purpose": "Core HR application access",
+      "expected_departments": [
+        "Human Resources"
+      ],
+      "risk_tags": []
+    },
+    {
+      "user_id": "aku.ankka",
+      "source": "Active Directory",
+      "resource_type": "security_group",
+      "name": "HR-Shared-Drive-Read",
+      "assignment": "transitive",
+      "purpose": "Read access to the HR shared drive",
+      "expected_departments": [
+        "Human Resources"
+      ],
+      "risk_tags": []
+    },
+    {
+      "user_id": "aku.ankka",
+      "source": "Exchange Online",
+      "resource_type": "shared_mailbox",
+      "name": "henkilosto@ankkalinna.example.invalid",
+      "assignment": "direct",
+      "purpose": "Handle incoming employee requests",
+      "expected_departments": [
+        "Human Resources"
+      ],
+      "risk_tags": []
+    },
+    {
+      "user_id": "aku.ankka",
+      "source": "Microsoft 365",
+      "resource_type": "microsoft_365_group",
+      "name": "All-Employees",
+      "assignment": "transitive",
+      "purpose": "Organization-wide communication",
+      "expected_departments": [],
+      "risk_tags": [],
+      "organization_wide": true
+    },
+    {
+      "user_id": "aku.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Rahasailio-Admin",
+      "assignment": "direct",
+      "purpose": "Administer finance application settings",
+      "expected_departments": [
+        "Finance"
+      ],
+      "risk_tags": [
+        "privileged"
+      ]
+    },
+    {
+      "user_id": "aku.ankka",
+      "source": "Active Directory",
+      "resource_type": "security_group",
+      "name": "Legacy-HR-Archive",
+      "assignment": "direct",
+      "purpose": "",
+      "expected_departments": [
+        "Human Resources"
+      ],
+      "risk_tags": []
+    },
+    {
+      "user_id": "mikki.hiiri",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Security-Readers",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Security"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "mikki.hiiri",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Security-Admins",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Security"
+      ],
+      "risk_tags": [
+        "privileged"
+      ],
+      "organization_wide": false
+    },
+    {
+      "user_id": "hansu.hanhi",
+      "source": "Active Directory",
+      "resource_type": "security_group",
+      "name": "Maatila-Tyovuorot",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Farm"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "iines.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-HR",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Human Resources"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "minni.hiiri",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Sovellustuki",
+      "assignment": "transitive",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Applications"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "hannu.hanhi",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Rahasailio-Luku",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Finance"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "pelle.peloton",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Pajan-Kokeilu",
+      "assignment": "direct",
+      "purpose": "",
+      "expected_departments": [
+        "Engineering"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "leenu.ankka",
+      "source": "Exchange Online",
+      "resource_type": "shared_mailbox",
+      "name": "viestinta@ankkalinna.example.invalid",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Communications"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "leenu.ankka",
+      "source": "Exchange Online",
+      "resource_type": "distribution_group",
+      "name": "Ankkalinna-Uutiset",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Communications"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "tupu.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-All-Employees",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "IT Training"
+      ],
+      "risk_tags": [],
+      "organization_wide": true
+    },
+    {
+      "user_id": "hupu.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Projektiarkisto",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Projects"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "lupu.ankka",
+      "source": "Entra ID",
+      "resource_type": "security_group",
+      "name": "Ankkalinna-Vanha-Projekti",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Projects"
+      ],
+      "risk_tags": [
+        "dormant"
+      ],
+      "organization_wide": false
+    }
+  ],
+  "access_profiles": [
+    {
+      "name": "HR specialist baseline",
+      "job_titles": [
+        "HR Specialist"
+      ],
+      "departments": [
+        "Human Resources"
+      ],
+      "suggestions": [
+        {
+          "name": "HR-Case-Management-Users",
+          "source": "Entra ID",
+          "resource_type": "security_group",
+          "purpose": "Access to the HR case management application"
+        }
+      ]
+    },
+    {
+      "name": "Ankkalinna office baseline",
+      "office_locations": [
+        "Ankkalinna"
+      ],
+      "suggestions": [
+        {
+          "name": "Ankkalinna-Office-Employees",
+          "source": "Active Directory",
+          "resource_type": "security_group",
+          "purpose": "Access to Ankkalinna office resources"
+        }
+      ]
+    },
+    {
+      "name": "Research Specialist baseline",
+      "job_titles": [
+        "Research Specialist"
+      ],
+      "departments": [
+        "Research"
+      ],
+      "suggestions": [
+        {
+          "name": "Ankkalinna-Research-Lab",
+          "source": "Entra ID",
+          "resource_type": "security_group",
+          "purpose": "Documented role requirement; validate eligibility"
+        }
+      ]
+    },
+    {
+      "name": "Sales Specialist baseline",
+      "job_titles": [
+        "Sales Specialist"
+      ],
+      "departments": [
+        "Sales"
+      ],
+      "suggestions": [
+        {
+          "name": "Ankkalinna-Sales-CRM",
+          "source": "Entra ID",
+          "resource_type": "security_group",
+          "purpose": "Documented role requirement; validate eligibility"
+        }
+      ]
+    }
+  ]
+}

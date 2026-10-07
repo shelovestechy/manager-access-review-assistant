@@ -1,0 +1,373 @@
+{
+  "organization": "Ankkalinna Identity Lab Oy",
+  "cases": [
+    {
+      "id": "mikki-privileged",
+      "title": "Mikki: perusteltukin ylläpito-oikeus tarkistetaan",
+      "snapshot": "mikki-privileged.json",
+      "employee": "mikki.hiiri",
+      "display_name": "Mikki Hiiri",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 2,
+        "review": [
+          "Ankkalinna-Security-Admins"
+        ],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "taavi-new-starter",
+      "title": "Taavi: uuden työntekijän dokumentoitu roolipohja",
+      "snapshot": "taavi-new-starter.json",
+      "employee": "taavi.ankka",
+      "display_name": "Taavi Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 0,
+        "review": [],
+        "suggestions": [
+          "Ankkalinna-Research-Lab"
+        ],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "hansu-seasonal",
+      "title": "Hansu: kausityön tunnus vanhenee seitsemässä päivässä",
+      "snapshot": "hansu-seasonal.json",
+      "employee": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "manager": "mummo.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "expiring_soon"
+      }
+    },
+    {
+      "id": "iines-contract-extension",
+      "title": "Iines: jatkettu sopimus mutta vanha tunnuksen päättymispäivä",
+      "snapshot": "iines-contract-extension.json",
+      "employee": "iines.ankka",
+      "display_name": "Iines Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "expiring_soon",
+        "contract_date_mismatch": true
+      }
+    },
+    {
+      "id": "minni-inherited",
+      "title": "Minni: peritty jäsenyys näkyy perittynä",
+      "snapshot": "minni-inherited.json",
+      "employee": "minni.hiiri",
+      "display_name": "Minni Hiiri",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active",
+        "assignments": {
+          "Ankkalinna-Sovellustuki": "transitive"
+        }
+      }
+    },
+    {
+      "id": "hannu-legacy-finance",
+      "title": "Hannu: myyntiin siirtyneen vanha talousoikeus",
+      "snapshot": "hannu-legacy-finance.json",
+      "employee": "hannu.hanhi",
+      "display_name": "Hannu Hanhi",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [
+          "Rahasailio-Luku"
+        ],
+        "suggestions": [
+          "Ankkalinna-Sales-CRM"
+        ],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "pelle-undocumented",
+      "title": "Pelle: kokeiluryhmän käyttötarkoitus puuttuu",
+      "snapshot": "pelle-undocumented.json",
+      "employee": "pelle.peloton",
+      "display_name": "Pelle Peloton",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [
+          "Pajan-Kokeilu"
+        ],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "leenu-mail-and-distribution",
+      "title": "Leenu: jaettu postilaatikko ja jakeluryhmä",
+      "snapshot": "leenu-mail-and-distribution.json",
+      "employee": "leenu.ankka",
+      "display_name": "Leenu Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 2,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "tupu-organization-wide",
+      "title": "Tupu: organisaation yhteinen oikeus erottuu",
+      "snapshot": "tupu-organization-wide.json",
+      "employee": "tupu.ankka",
+      "display_name": "Tupu Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 1,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "hupu-expired",
+      "title": "Hupu: päättynyt työsuhde ja vanhentunut tunnus",
+      "snapshot": "hupu-expired.json",
+      "employee": "hupu.ankka",
+      "display_name": "Hupu Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "expired"
+      }
+    },
+    {
+      "id": "lupu-dormant",
+      "title": "Lupu: lähdetiedossa käyttämättömäksi merkitty oikeus",
+      "snapshot": "lupu-dormant.json",
+      "employee": "lupu.ankka",
+      "display_name": "Lupu Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [
+          "Ankkalinna-Vanha-Projekti"
+        ],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "mikki-manager-conflict",
+      "title": "Mikki: AD ja Entra kertovat eri esihenkilön",
+      "snapshot": "mikki-manager-conflict.json",
+      "employee": "mikki.hiiri",
+      "display_name": "Mikki Hiiri",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "deny"
+      }
+    },
+    {
+      "id": "taavi-manager-missing",
+      "title": "Taavi: Entran esihenkilötieto puuttuu",
+      "snapshot": "taavi-manager-missing.json",
+      "employee": "taavi.ankka",
+      "display_name": "Taavi Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "deny"
+      }
+    },
+    {
+      "id": "hansu-wrong-manager",
+      "title": "Hansu: Roope ei ole Mummon työntekijän esihenkilö",
+      "snapshot": "hansu-wrong-manager.json",
+      "employee": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "deny"
+      }
+    },
+    {
+      "id": "minni-self-review",
+      "title": "Minni: omien oikeuksien esihenkilötarkistus estetään",
+      "snapshot": "minni-self-review.json",
+      "employee": "minni.hiiri",
+      "display_name": "Minni Hiiri",
+      "manager": "minni.hiiri",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "deny"
+      }
+    },
+    {
+      "id": "taavi-no-expiry",
+      "title": "Taavi: päättymispäivää ei ole asetettu",
+      "snapshot": "taavi-no-expiry.json",
+      "employee": "taavi.ankka",
+      "display_name": "Taavi Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 0,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "no_expiry_configured"
+      }
+    },
+    {
+      "id": "hansu-expiry-today",
+      "title": "Hansu: päättymisen raja-arvo today",
+      "snapshot": "hansu-expiry-today.json",
+      "employee": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "manager": "mummo.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 0,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "expiring_soon"
+      }
+    },
+    {
+      "id": "hansu-expiry-90-days",
+      "title": "Hansu: päättymisen raja-arvo 90-days",
+      "snapshot": "hansu-expiry-90-days.json",
+      "employee": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "manager": "mummo.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 0,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "expiring_soon"
+      }
+    },
+    {
+      "id": "hansu-expiry-91-days",
+      "title": "Hansu: päättymisen raja-arvo 91-days",
+      "snapshot": "hansu-expiry-91-days.json",
+      "employee": "hansu.hanhi",
+      "display_name": "Hansu Hanhi",
+      "manager": "mummo.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 0,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "pelle-source-name-collision",
+      "title": "Pelle: sama nimi AD:ssa ei tarkoita Entra-oikeutta",
+      "snapshot": "pelle-source-name-collision.json",
+      "employee": "pelle.peloton",
+      "display_name": "Pelle Peloton",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [
+          "Paja-Lab"
+        ],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "taavi-already-member",
+      "title": "Taavi: olemassa olevaa oikeutta ei ehdoteta uudestaan",
+      "snapshot": "taavi-already-member.json",
+      "employee": "taavi.ankka",
+      "display_name": "Taavi Ankka",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "allow",
+        "total": 1,
+        "review": [],
+        "suggestions": [],
+        "organization_wide": 0,
+        "account_status": "active"
+      }
+    },
+    {
+      "id": "mikki-duplicate-identity",
+      "title": "Mikki: monistunut käyttäjätunnus keskeyttää analyysin",
+      "snapshot": "mikki-duplicate-identity.json",
+      "employee": "mikki.hiiri",
+      "display_name": "Mikki Hiiri",
+      "manager": "roope.ankka",
+      "review_date": "2026-10-07",
+      "expected": {
+        "outcome": "error",
+        "error_contains": "duplicate employee id"
+      }
+    }
+  ]
+}

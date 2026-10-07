@@ -1,0 +1,44 @@
+{
+  "employees": [
+    {
+      "user_id": "leenu.ankka",
+      "display_name": "Leenu Ankka",
+      "job_title": "Communications Specialist",
+      "department": "Communications",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
+      "ad_account_expires_at": "2028-01-01",
+      "contract_end_date": null
+    }
+  ],
+  "entitlements": [
+    {
+      "user_id": "leenu.ankka",
+      "source": "Exchange Online",
+      "resource_type": "shared_mailbox",
+      "name": "viestinta@ankkalinna.example.invalid",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Communications"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    },
+    {
+      "user_id": "leenu.ankka",
+      "source": "Exchange Online",
+      "resource_type": "distribution_group",
+      "name": "Ankkalinna-Uutiset",
+      "assignment": "direct",
+      "purpose": "Documented business access",
+      "expected_departments": [
+        "Communications"
+      ],
+      "risk_tags": [],
+      "organization_wide": false
+    }
+  ],
+  "access_profiles": []
+}
