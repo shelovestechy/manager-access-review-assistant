@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Manager Access Review Assistant</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Manager Access Review Assistant home">
+        <span class="brand-mark" aria-hidden="true">AR</span>
+        <span>Access Review</span>
+      </a>
+      <span class="status-pill"><span class="status-dot"></span>Read-only demo</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Human-in-the-loop identity governance</p>
+          <h1>Access reviews that explain themselves.</h1>
+          <p class="lede">
+            Give verified managers one clear view of employee access, account lifecycle,
+            and evidence-based suggestions—without allowing the assistant to change anything.
+          </p>
+        </div>
+
+        <form id="review-form" class="review-form">
+          <div class="form-heading">
+            <div>
+              <p class="form-kicker">Open a review</p>
+              <h2>Manager verification</h2>
+            </div>
+            <span class="source-badge">AD + Entra ID</span>
+          </div>
+          <label>
+            Manager account
+            <input id="manager-id" name="manager" value="liisa.esihenkilo" autocomplete="off" required>
+          </label>
+          <label>
+            Employee account
+            <input id="user-id" name="user" value="matti.meikalainen" autocomplete="off" required>
+          </label>
+          <label>
+            Review date
+            <input id="as-of" name="as_of" type="date" value="2026-10-07" required>
+          </label>
+          <button class="primary-button" type="submit">Open access review <span aria-hidden="true">→</span></button>
+          <p class="form-note">Access is denied unless the requester is the direct manager in both directories.</p>
+        </form>
+      </section>
+
+      <div id="message" class="message" role="alert" hidden></div>
+
+      <section id="review" class="review" hidden>
+        <div class="review-header">
+          <div>
+            <p class="eyebrow">Authorized review</p>
+            <h2 id="employee-name">Employee name</h2>
+            <p id="employee-meta" class="muted"></p>
+          </div>
+          <div class="verified-badge" title="Verified from both directory sources">
+            <span aria-hidden="true">✓</span> Manager verified
+          </div>
+        </div>
+
+        <div class="metrics" aria-label="Access review summary">
+          <article class="metric-card"><span>Access items</span><strong id="metric-total">0</strong></article>
+          <article class="metric-card good"><span>Role-aligned</span><strong id="metric-expected">0</strong></article>
+          <article class="metric-card warning"><span>Review</span><strong id="metric-review">0</strong></article>
+          <article class="metric-card info"><span>Suggestions</span><strong id="metric-suggestions">0</strong></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article id="account-card" class="panel account-card">
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">Active Directory</p>
+                <h3>Account lifecycle</h3>
+              </div>
+              <span id="account-status" class="tag">Status</span>
+            </div>
+            <div class="expiry-row">
+              <div><span>Account expires</span><strong id="account-expiry">—</strong></div>
+              <div><span>Days remaining</span><strong id="days-remaining">—</strong></div>
+              <div><span>Contract ends</span><strong id="contract-end">—</strong></div>
+            </div>
+            <ul id="account-messages" class="evidence-list"></ul>
+          </article>
+
+          <article class="panel boundary-card">
+            <p class="panel-kicker">Safety boundary</p>
+            <h3>No write access. Ever.</h3>
+            <p id="decision-boundary" class="muted"></p>
+            <div class="boundary-flow">
+              <span>Assistant explains</span><span aria-hidden="true">→</span>
+              <span>Manager requests</span><span aria-hidden="true">→</span>
+              <span>ICT validates</span>
+            </div>
+          </article>
+        </div>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">Current state</p><h2>Access inventory</h2></div>
+            <p>Direct and inherited access remain visible and traceable.</p>
+          </div>
+          <div id="access-groups" class="access-groups"></div>
+        </section>
+
+        <section class="section-block suggestions-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">Decision support</p><h2>Possible missing access</h2></div>
+            <p>Derived from approved attribute profiles—not from autonomous AI decisions.</p>
+          </div>
+          <div id="suggestions" class="suggestion-grid"></div>
+        </section>
+
+        <section class="request-builder">
+          <div class="request-intro">
+            <p class="eyebrow">Next step</p>
+            <h2>Prepare a Service Desk request</h2>
+            <p>
+              Select the changes you want ICT to review. This creates copyable text only;
+              it does not open a ticket or change access.
+            </p>
+          </div>
+          <form id="draft-form" class="draft-form">
+            <div class="change-columns">
+              <fieldset>
+                <legend>Requested additions</legend>
+                <div id="addition-options" class="option-list"></div>
+              </fieldset>
+              <fieldset>
+                <legend>Requested removals</legend>
+                <div id="removal-options" class="option-list"></div>
+              </fieldset>
+            </div>
+            <label>
+              Business reason
+              <textarea id="reason" rows="3" placeholder="Explain why the change is needed…" required></textarea>
+            </label>
+            <button class="primary-button" type="submit">Create request draft</button>
+          </form>
+          <div id="draft-result" class="draft-result" hidden>
+            <div class="draft-heading">
+              <div><p class="panel-kicker">Draft only</p><h3>Service Desk request</h3></div>
+              <button id="copy-draft" class="secondary-button" type="button">Copy text</button>
+            </div>
+            <pre id="draft-text"></pre>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <span>Manager Access Review Assistant</span>
+      <span>Synthetic data · Local demo · No production connection</span>
+    </footer>
+  </body>
+</html>

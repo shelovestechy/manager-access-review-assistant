@@ -1,0 +1,203 @@
+const reviewForm = document.querySelector("#review-form");
+const draftForm = document.querySelector("#draft-form");
+const reviewSection = document.querySelector("#review");
+const message = document.querySelector("#message");
+const draftResult = document.querySelector("#draft-result");
+let currentReview = null;
+
+reviewForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  hideMessage();
+  draftResult.hidden = true;
+  const button = reviewForm.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = "Verifying manager…";
+  try {
+    const report = await postJson("/api/review", basePayload());
+    currentReview = report;
+    renderReview(report);
+    reviewSection.hidden = false;
+    reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    currentReview = null;
+    reviewSection.hidden = true;
+    showMessage(error.message);
+  } finally {
+    button.disabled = false;
+    button.innerHTML = "Open access review <span aria-hidden='true'>→</span>";
+  }
+});
+
+draftForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  hideMessage();
+  if (!currentReview) return;
+  const additions = selectedValues("addition");
+  const removals = selectedValues("removal");
+  if (!additions.length && !removals.length) {
+    showMessage("Select at least one requested addition or removal.");
+    return;
+  }
+  try {
+    const response = await postJson("/api/service-desk-draft", {
+      ...basePayload(),
+      additions,
+      removals,
+      reason: document.querySelector("#reason").value.trim(),
+    });
+    document.querySelector("#draft-text").textContent = response.draft;
+    draftResult.hidden = false;
+    draftResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+document.querySelector("#copy-draft").addEventListener("click", async (event) => {
+  await navigator.clipboard.writeText(document.querySelector("#draft-text").textContent);
+  event.currentTarget.textContent = "Copied";
+  window.setTimeout(() => { event.currentTarget.textContent = "Copy text"; }, 1400);
+});
+
+function basePayload() {
+  return {
+    requester_id: document.querySelector("#manager-id").value.trim(),
+    user_id: document.querySelector("#user-id").value.trim(),
+    as_of: document.querySelector("#as-of").value,
+  };
+}
+
+async function postJson(url, payload) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || "The request could not be completed.");
+  return body;
+}
+
+function renderReview(report) {
+  const employee = report.employee;
+  document.querySelector("#employee-name").textContent = employee.display_name;
+  document.querySelector("#employee-meta").textContent =
+    `${employee.job_title} · ${employee.department} · ${employee.office_location}`;
+  document.querySelector("#metric-total").textContent = report.summary.total;
+  document.querySelector("#metric-expected").textContent = report.summary.expected;
+  document.querySelector("#metric-review").textContent = report.summary.review;
+  document.querySelector("#metric-suggestions").textContent = report.summary.suggestions;
+  document.querySelector("#decision-boundary").textContent = report.decision_boundary;
+  renderAccount(report.account_status);
+  renderAccess(report.categories);
+  renderSuggestions(report.access_suggestions);
+  renderChangeOptions(report.categories, report.access_suggestions);
+}
+
+function renderAccount(account) {
+  document.querySelector("#account-expiry").textContent = account.ad_account_expires_at || "Not configured";
+  document.querySelector("#days-remaining").textContent = account.days_remaining ?? "—";
+  document.querySelector("#contract-end").textContent = account.contract_end_date || "Not available";
+  const status = document.querySelector("#account-status");
+  status.textContent = account.status.replaceAll("_", " ");
+  status.className = `tag ${statusClass(account.status)}`;
+  const messages = document.querySelector("#account-messages");
+  messages.replaceChildren(...account.messages.map((text) => element("li", {}, text)));
+}
+
+function renderAccess(categories) {
+  const definitions = [
+    ["Requires review", categories.review, "Review the evidence before requesting any change."],
+    ["Role-aligned", categories.expected, "Access that matches the current documented rules."],
+    ["Organization-wide", categories.organization_wide, "Common access reported separately to reduce noise."],
+  ];
+  const container = document.querySelector("#access-groups");
+  container.replaceChildren(...definitions.map(([title, items, description]) => {
+    const group = element("article", { className: "access-group" });
+    const heading = element("div", { className: "access-group-heading" });
+    const headingText = element("div");
+    headingText.append(element("h3", {}, title), element("small", {}, description));
+    heading.append(headingText, element("span", { className: "count-badge" }, String(items.length)));
+    const list = element("div", { className: "access-list" });
+    items.forEach((item) => list.append(accessRow(item)));
+    group.append(heading, list);
+    return group;
+  }));
+}
+
+function accessRow(item) {
+  const row = element("div", { className: "access-item" });
+  const identity = element("div");
+  identity.append(element("div", { className: "access-name" }, item.name), element("small", {}, item.resource_type.replaceAll("_", " ")));
+  row.append(
+    identity,
+    element("small", {}, item.source),
+    element("span", { className: "assignment" }, item.assignment),
+    element("span", { className: "finding" }, item.evidence ? item.evidence.join(" · ") : item.purpose || "Purpose not documented"),
+  );
+  return row;
+}
+
+function renderSuggestions(suggestions) {
+  const container = document.querySelector("#suggestions");
+  if (!suggestions.length) {
+    container.replaceChildren(element("p", { className: "empty-state" }, "No suggestions from the current approved profiles."));
+    return;
+  }
+  container.replaceChildren(...suggestions.map((item) => {
+    const card = element("article", { className: "suggestion-card" });
+    const attributes = element("div", { className: "attribute-list" });
+    item.matched_attributes.forEach((attribute) => attributes.append(element("span", { className: "attribute-chip" }, attribute)));
+    card.append(element("h3", {}, item.name), element("p", {}, item.purpose), attributes);
+    return card;
+  }));
+}
+
+function renderChangeOptions(categories, suggestions) {
+  const currentItems = [...categories.review, ...categories.expected, ...categories.organization_wide];
+  renderOptions("#addition-options", suggestions.map((item) => item.name), "addition");
+  renderOptions("#removal-options", currentItems.map((item) => item.name), "removal");
+}
+
+function renderOptions(selector, values, name) {
+  const container = document.querySelector(selector);
+  if (!values.length) {
+    container.replaceChildren(element("p", { className: "empty-state" }, "No options available."));
+    return;
+  }
+  container.replaceChildren(...values.map((value) => {
+    const input = element("input", { type: "checkbox", name, value });
+    const label = element("label");
+    label.append(input, document.createTextNode(value));
+    return label;
+  }));
+}
+
+function selectedValues(name) {
+  return [...document.querySelectorAll(`input[name='${name}']:checked`)].map((input) => input.value);
+}
+
+function statusClass(status) {
+  if (status === "expired") return "danger";
+  if (status === "expiring_soon") return "warning";
+  if (status === "active") return "good";
+  return "";
+}
+
+function element(tagName, properties = {}, text = null) {
+  const node = document.createElement(tagName);
+  Object.assign(node, properties);
+  if (text !== null) node.textContent = text;
+  return node;
+}
+
+function showMessage(text) {
+  message.textContent = text;
+  message.hidden = false;
+  message.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function hideMessage() {
+  message.hidden = true;
+  message.textContent = "";
+}

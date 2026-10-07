@@ -2,7 +2,9 @@
 
 An explainable, human-in-the-loop prototype that helps a verified direct manager understand an employee's accumulated access and prepare a request for ICT or Service Desk.
 
-> **Project status:** Phase 1 MVP. The current version uses synthetic JSON data and a deterministic rule engine. It does not connect to a tenant, call a language model, open tickets, or change access.
+> **Project status:** Portfolio demo v1.0. The current version uses synthetic JSON data and a deterministic rule engine. It does not connect to a tenant, call a language model, open tickets, or change access.
+
+![Manager access review dashboard](docs/overview.png)
 
 ## Why this project exists
 
@@ -13,6 +15,12 @@ This project brings those signals into one report. It highlights items that dese
 ## Non-negotiable boundary
 
 The assistant cannot grant, remove, approve, or deny access. It cannot submit a ticket. The verified manager chooses what to request, and ICT or Service Desk validates and implements the change through the organization's normal process.
+
+## Why the v1.0 baseline is deterministic
+
+Identity decisions are high-impact. Version 1.0 therefore keeps authorization, expiry calculation, anomaly flags, and access-profile matching deterministic and testable. This is the evidence layer an AI summary can safely sit on top of later.
+
+An optional language-model phase is planned only for manager-friendly summarization. It must be grounded exclusively in the structured report, show supporting evidence, treat directory text as untrusted input, and remain unable to call write or ticket-submission tools. The project does not claim that deterministic rules are generative AI.
 
 ## Manager authorization
 
@@ -33,12 +41,28 @@ The MVP demonstrates this check with synthetic attributes. A live version must p
 
 Suggestions are candidates for review, not entitlements the employee automatically deserves.
 
-## Run the MVP
+## Run the browser demo
 
 Requirements: Python 3.11 or newer. No third-party packages are required.
 
 ```powershell
-python -m access_review data/sample_access_snapshot.json `
+python -m access_review.web
+```
+
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) and use the pre-filled synthetic identities:
+
+- manager: `liisa.esihenkilo`
+- employee: `matti.meikalainen`
+- review date: `2026-10-07`
+
+The browser application supports the complete demo flow: manager verification, access inventory, account-expiry warning, attribute-based suggestions, and a copyable Service Desk draft. It runs on localhost and includes no outbound application integrations.
+
+## Run the CLI
+
+The same analysis is available as a command-line report:
+
+```powershell
+python -m access_review access_review/demo_data/sample_access_snapshot.json `
   --user matti.meikalainen `
   --manager liisa.esihenkilo `
   --as-of 2026-10-07
@@ -47,7 +71,7 @@ python -m access_review data/sample_access_snapshot.json `
 Create an example Service Desk request draft:
 
 ```powershell
-python -m access_review data/sample_access_snapshot.json `
+python -m access_review access_review/demo_data/sample_access_snapshot.json `
   --user matti.meikalainen `
   --manager liisa.esihenkilo `
   --as-of 2026-10-07 `
@@ -56,19 +80,25 @@ python -m access_review data/sample_access_snapshot.json `
   --reason "Align access with current HR duties."
 ```
 
-Add `--json` for machine-readable output. Run tests with:
+Add `--json` for machine-readable output.
+
+## Quality checks
+
+Run the full test suite:
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
+The suite covers manager authorization, conflicting directory records, expiry and contract-date warnings, explainable suggestions, Service Desk draft boundaries, HTTP security headers, API denial behavior, and the browser demo backend. GitHub Actions runs the same suite for every push and pull request.
+
 ## Architecture
 
 ```text
-Verified manager identity
+Browser or CLI input (untrusted)
           |
           v
-AD manager + Entra manager check ---- mismatch ---> deny
+Server-side AD manager + Entra manager check ---- mismatch ---> deny
           |
           v
 Read-only identity snapshot
@@ -85,6 +115,8 @@ Optional Service Desk draft ----> human validation and implementation
 ```
 
 Collection, authorization, analysis, and presentation are kept separate so synthetic data can later be replaced by Microsoft Graph and lab Active Directory adapters without making the analysis layer capable of changing access.
+
+See [Architecture](docs/ARCHITECTURE.md) for trust boundaries, request flows, and the planned live-adapter design.
 
 ## Current deterministic rules
 
@@ -115,19 +147,27 @@ An access suggestion is shown only when all attributes defined by a documented a
 
 See [SECURITY.md](SECURITY.md) for the threat model.
 
-## Roadmap
+## Completed v1.0 scope
 
 - [x] Synthetic data model, explainable analysis, CLI, and tests
 - [x] Dual-source direct-manager authorization check
 - [x] AD account expiry warning and Service Desk notice draft
 - [x] Attribute-based access suggestions with evidence
 - [x] Explicit access-change request draft with a hard no-write boundary
+- [x] Responsive local browser interface
+- [x] Server-side API validation and security headers
+- [x] Desktop and mobile browser QA
+- [x] Continuous integration with GitHub Actions
+
+## Future lab integrations
+
 - [ ] Read-only Entra ID lab adapter using Microsoft Graph
 - [ ] Read-only AD DS lab adapter for manager and account-expiry attributes
 - [ ] Shared mailbox and distribution-group adapters
-- [ ] Manager-facing web UI or Copilot Studio tool
 - [ ] Optional LLM summary grounded only in collected evidence
 - [ ] Audit logging, role-based access, and review export
+
+These integrations are deliberately outside the synthetic portfolio demo. They require a dedicated lab tenant, explicit permission review, and tenant-specific configuration; the demo is complete and usable without them.
 
 ## Portfolio talking points
 

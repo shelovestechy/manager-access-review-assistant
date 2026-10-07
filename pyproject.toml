@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "manager-access-review-assistant"
-version = "0.1.0"
+version = "1.0.0"
 description = "Explainable, human-in-the-loop access review assistant prototype"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -12,9 +12,19 @@ dependencies = []
 
 [project.scripts]
 access-review = "access_review.cli:main"
+access-review-web = "access_review.web:main"
 
 [tool.setuptools]
 packages = ["access_review"]
 
 [tool.setuptools.package-dir]
 access_review = "access_review"
+
+[tool.setuptools.package-data]
+access_review = [
+  "demo_data/*.json",
+  "web_assets/*.html",
+  "web_assets/*.css",
+  "web_assets/*.js",
+  "web_assets/*.svg",
+]

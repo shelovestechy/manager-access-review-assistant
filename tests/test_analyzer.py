@@ -11,7 +11,7 @@ from access_review.repository import load_snapshot
 from access_review.service_desk import build_access_change_draft
 
 
-FIXTURE = Path(__file__).parents[1] / "data" / "sample_access_snapshot.json"
+FIXTURE = Path(__file__).parents[1] / "access_review" / "demo_data" / "sample_access_snapshot.json"
 MANAGER = "liisa.esihenkilo"
 AS_OF = date(2026, 10, 7)
 
@@ -43,6 +43,15 @@ class AnalyzerTests(unittest.TestCase):
             analyze_access(
                 self.snapshot, "matti.meikalainen", "other.manager", as_of=AS_OF
             )
+
+    def test_manager_identifier_matching_is_case_insensitive(self) -> None:
+        report = analyze_access(
+            self.snapshot,
+            "matti.meikalainen",
+            "LIISA.ESIHENKILO",
+            as_of=AS_OF,
+        )
+        self.assertTrue(report["authorization"]["authorized"])
 
     def test_conflicting_ad_and_entra_manager_records_fail_closed(self) -> None:
         employee = replace(

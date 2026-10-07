@@ -84,8 +84,9 @@ def _find_employee(snapshot: Snapshot, user_id: str) -> Employee:
 
 
 def _authorize_direct_manager(employee: Employee, requester_id: str) -> None:
-    ad_match = employee.ad_manager_id == requester_id
-    entra_match = employee.entra_manager_id == requester_id
+    normalized_requester = requester_id.casefold()
+    ad_match = employee.ad_manager_id.casefold() == normalized_requester
+    entra_match = employee.entra_manager_id.casefold() == normalized_requester
     if not (ad_match and entra_match):
         raise PermissionError(
             "access denied: requester must be the employee's direct manager in both AD and Entra ID"
