@@ -49,8 +49,8 @@ class WebDemoTests(unittest.TestCase):
         status, report = self.post(
             "/api/review",
             {
-                "user_id": "matti.meikalainen",
-                "requester_id": "liisa.esihenkilo",
+                "user_id": "aku.ankka",
+                "requester_id": "roope.ankka",
                 "as_of": "2026-10-07",
             },
         )
@@ -62,7 +62,7 @@ class WebDemoTests(unittest.TestCase):
         status, body = self.post(
             "/api/review",
             {
-                "user_id": "matti.meikalainen",
+                "user_id": "aku.ankka",
                 "requester_id": "other.manager",
                 "as_of": "2026-10-07",
             },
@@ -74,11 +74,11 @@ class WebDemoTests(unittest.TestCase):
         status, body = self.post(
             "/api/service-desk-draft",
             {
-                "user_id": "matti.meikalainen",
-                "requester_id": "liisa.esihenkilo",
+                "user_id": "aku.ankka",
+                "requester_id": "roope.ankka",
                 "as_of": "2026-10-07",
                 "additions": ["HR-Case-Management-Users"],
-                "removals": ["Finance-Admin"],
+                "removals": ["Rahasailio-Admin"],
                 "reason": "Align access with current HR duties.",
             },
         )
@@ -91,7 +91,7 @@ class WebDemoTests(unittest.TestCase):
             "/api/review",
             {
                 "user_id": "x" * 201,
-                "requester_id": "liisa.esihenkilo",
+                "requester_id": "roope.ankka",
                 "as_of": "2026-10-07",
             },
         )

@@ -1,20 +1,20 @@
 {
   "employees": [
     {
-      "user_id": "matti.meikalainen",
-      "display_name": "Matti Meikäläinen",
+      "user_id": "aku.ankka",
+      "display_name": "Aku Ankka",
       "job_title": "HR Specialist",
       "department": "Human Resources",
-      "office_location": "Helsinki",
-      "ad_manager_id": "liisa.esihenkilo",
-      "entra_manager_id": "liisa.esihenkilo",
+      "office_location": "Ankkalinna",
+      "ad_manager_id": "roope.ankka",
+      "entra_manager_id": "roope.ankka",
       "ad_account_expires_at": "2026-12-15",
       "contract_end_date": "2027-06-30"
     }
   ],
   "entitlements": [
     {
-      "user_id": "matti.meikalainen",
+      "user_id": "aku.ankka",
       "source": "Entra ID",
       "resource_type": "security_group",
       "name": "HR-Employees",
@@ -24,7 +24,7 @@
       "risk_tags": []
     },
     {
-      "user_id": "matti.meikalainen",
+      "user_id": "aku.ankka",
       "source": "Active Directory",
       "resource_type": "security_group",
       "name": "HR-Shared-Drive-Read",
@@ -34,17 +34,17 @@
       "risk_tags": []
     },
     {
-      "user_id": "matti.meikalainen",
+      "user_id": "aku.ankka",
       "source": "Exchange Online",
       "resource_type": "shared_mailbox",
-      "name": "hr-requests@example.invalid",
+      "name": "henkilosto@ankkalinna.example.invalid",
       "assignment": "direct",
       "purpose": "Handle incoming employee requests",
       "expected_departments": ["Human Resources"],
       "risk_tags": []
     },
     {
-      "user_id": "matti.meikalainen",
+      "user_id": "aku.ankka",
       "source": "Microsoft 365",
       "resource_type": "microsoft_365_group",
       "name": "All-Employees",
@@ -55,17 +55,17 @@
       "organization_wide": true
     },
     {
-      "user_id": "matti.meikalainen",
+      "user_id": "aku.ankka",
       "source": "Entra ID",
       "resource_type": "security_group",
-      "name": "Finance-Admin",
+      "name": "Rahasailio-Admin",
       "assignment": "direct",
       "purpose": "Administer finance application settings",
       "expected_departments": ["Finance"],
       "risk_tags": ["privileged"]
     },
     {
-      "user_id": "matti.meikalainen",
+      "user_id": "aku.ankka",
       "source": "Active Directory",
       "resource_type": "security_group",
       "name": "Legacy-HR-Archive",
@@ -90,14 +90,14 @@
       ]
     },
     {
-      "name": "Helsinki office baseline",
-      "office_locations": ["Helsinki"],
+      "name": "Ankkalinna office baseline",
+      "office_locations": ["Ankkalinna"],
       "suggestions": [
         {
-          "name": "Helsinki-Office-Employees",
+          "name": "Ankkalinna-Office-Employees",
           "source": "Active Directory",
           "resource_type": "security_group",
-          "purpose": "Access to Helsinki office resources"
+          "purpose": "Access to Ankkalinna office resources"
         }
       ]
     }

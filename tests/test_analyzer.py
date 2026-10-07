@@ -12,7 +12,7 @@ from access_review.service_desk import build_access_change_draft
 
 
 FIXTURE = Path(__file__).parents[1] / "access_review" / "demo_data" / "sample_access_snapshot.json"
-MANAGER = "liisa.esihenkilo"
+MANAGER = "roope.ankka"
 AS_OF = date(2026, 10, 7)
 
 
@@ -22,7 +22,7 @@ class AnalyzerTests(unittest.TestCase):
 
     def analyze(self):
         return analyze_access(
-            self.snapshot, "matti.meikalainen", MANAGER, as_of=AS_OF
+            self.snapshot, "aku.ankka", MANAGER, as_of=AS_OF
         )
 
     def test_summary_counts_categories_and_suggestions(self) -> None:
@@ -41,14 +41,14 @@ class AnalyzerTests(unittest.TestCase):
     def test_only_direct_manager_in_both_sources_is_authorized(self) -> None:
         with self.assertRaisesRegex(PermissionError, "both AD and Entra ID"):
             analyze_access(
-                self.snapshot, "matti.meikalainen", "other.manager", as_of=AS_OF
+                self.snapshot, "aku.ankka", "other.manager", as_of=AS_OF
             )
 
     def test_manager_identifier_matching_is_case_insensitive(self) -> None:
         report = analyze_access(
             self.snapshot,
-            "matti.meikalainen",
-            "LIISA.ESIHENKILO",
+            "aku.ankka",
+            "ROOPE.ANKKA",
             as_of=AS_OF,
         )
         self.assertTrue(report["authorization"]["authorized"])
@@ -61,7 +61,7 @@ class AnalyzerTests(unittest.TestCase):
         with self.assertRaisesRegex(PermissionError, "both AD and Entra ID"):
             analyze_access(
                 conflicting_snapshot,
-                "matti.meikalainen",
+                "aku.ankka",
                 MANAGER,
                 as_of=AS_OF,
             )
@@ -88,7 +88,7 @@ class AnalyzerTests(unittest.TestCase):
     def test_privileged_department_mismatch_is_explained(self) -> None:
         report = self.analyze()
         finance = next(
-            item for item in report["categories"]["review"] if item["name"] == "Finance-Admin"
+            item for item in report["categories"]["review"] if item["name"] == "Rahasailio-Admin"
         )
         self.assertIn("privileged access", finance["evidence"])
         self.assertTrue(finance["evidence"][0].startswith("department mismatch:"))
@@ -101,7 +101,7 @@ class AnalyzerTests(unittest.TestCase):
         draft = build_access_change_draft(
             self.analyze(),
             additions=["HR-Case-Management-Users"],
-            removals=["Finance-Admin"],
+            removals=["Rahasailio-Admin"],
             business_reason="Align access with current HR duties.",
         )
         self.assertIn("Requested additions", draft)
