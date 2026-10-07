@@ -52,7 +52,7 @@ Alla on ehdotus **kirjautuneen käyttäjän puolesta toimivalle delegoidulle Gra
 | Tarve | Esimerkkikutsu | Oikeus ja rajaus |
 | --- | --- | --- |
 | Akun esihenkilö | `GET /users/{aku-id}/manager` | Delegoitu `User.Read.All`. Microsoftin tämänhetkinen manager-endpointin taulukko ei tue application-oikeuksia. |
-| Akun suorat ryhmäjäsenyydet | `GET /users/{aku-id}/memberOf` | Tarkistettava tämän endpointin oikeustaulukosta toteutusvaiheessa; kerättävä erikseen, jotta suorat ja välilliset jäsenyydet voidaan erottaa. |
+| Akun suorat ryhmäjäsenyydet | `GET /users/{aku-id}/memberOf` | Delegoitu `User.Read.All`. Kerättävä erikseen, jotta suorat ja välilliset jäsenyydet voidaan erottaa. |
 | Akun suorat ja välilliset jäsenyydet | `GET /users/{aku-id}/transitiveMemberOf` | Toisen käyttäjän jäsenyyksien lukuun dokumentoitu `User.Read.All`. Vastaus voi sisältää myös muita directoryObject-tyyppejä. |
 | Ryhmien nimet ja tarvittavat perustiedot | `GET /groups/{group-id}?$select=id,displayName,description` | Esimerkiksi read-only `GroupMember.Read.All` on dokumentoitu tuettu oikeus. Tarkista, riittääkö kapeampi lukuscope valittuihin kenttiin. |
 | Piilotetut jäsenyydet | Vain erikseen hyväksytyn tarpeen perusteella | `Member.Read.Hidden` voi olla tarpeen. Ei mukaan oletusarvoisesti. |
@@ -156,6 +156,7 @@ Projektin arvo on käyttäjän tarpeen muuttamisessa selkeäksi palveluksi: tiet
 Tarkista endpointin ajantasainen dokumentaatio ja oikeuksien toiminta ennen myöntämistä.
 
 - [Graph: user manager](https://learn.microsoft.com/en-us/graph/api/user-list-manager?view=graph-rest-1.0)
+- [Graph: user memberOf](https://learn.microsoft.com/en-us/graph/api/user-list-memberof?view=graph-rest-1.0)
 - [Graph: user transitiveMemberOf](https://learn.microsoft.com/en-us/graph/api/user-list-transitivememberof?view=graph-rest-1.0)
 - [Graph: group properties](https://learn.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0)
 - [Graph permissions reference](https://learn.microsoft.com/en-us/graph/permissions-reference)
