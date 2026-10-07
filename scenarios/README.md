@@ -115,4 +115,4 @@ työntekijän oikeuksien erillisyys ja Hansun esihenkilörajaus.
 Viisi aiempaa AI-järjestyksen arviointitapausta säilyvät kansiossa `evaluation/`.
 Nämä 22 uutta tapausta testaavat toiminnallisuutta; niitä ei esitetä mitattuna AI-laatuna.
 
-**Validointi:** 64 testiä läpäisty. Oikean mallin arviointi ja selainulkoasun tarkistus ovat edelleen avoinna.
+**Validointi:** 64 testiä läpäisty. Selaintesti läpäisty GitHubissa ja työpöytä-/mobiilikuvat tarkistettu. Oikean AI-mallin arviointi on edelleen avoinna.

@@ -40,6 +40,7 @@ let browser;
   assert.match(await page.locator('#expiry-draft').textContent(),/Hansu Hanhi/);
   await page.click('#summary-button');
   await page.waitForFunction(()=>document.querySelector('#summary-result').textContent.includes('Rule-based briefing'));
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior='auto'; window.scrollTo({top:0,behavior:'instant'}); });
   mkdirSync('browser-results',{recursive:true});
   await page.screenshot({path:'browser-results/desktop.png',fullPage:true});
   await page.setViewportSize({width:390,height:844});

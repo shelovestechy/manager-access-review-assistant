@@ -267,6 +267,7 @@ fetch("/api/demo-scenarios").then(async (response) => {
 
 scenarioSelect.addEventListener("change", () => {
   const scenario = demoScenarios.find((item) => item.id === scenarioSelect.value);
+  document.querySelector("#scenario-status").textContent = scenario ? scenario.title : "Nykyisen snapshotin tarkistus";
   document.querySelector("#manager-id").value = scenario ? scenario.manager : "roope.ankka";
   document.querySelector("#user-id").value = scenario ? scenario.employee : "aku.ankka";
   document.querySelector("#as-of").value = scenario ? scenario.review_date : "2026-10-07";

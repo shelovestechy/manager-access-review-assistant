@@ -168,3 +168,5 @@ select { width: 100%; min-width: 0; padding: 12px; border: 1px solid #cad4ce; bo
 #expiry-request { grid-column: 1 / -1; min-width: 0; }
 #expiry-draft { color: var(--navy); white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; padding: 16px; background: #f3f6f3; border-radius: 12px; }
 #inventory, #attention, #request { scroll-margin-top: 20px; }
+
+.request-builder .draft-form { grid-column: 1 / -1; }

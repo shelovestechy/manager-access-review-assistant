@@ -57,9 +57,9 @@ JSON, timeout fallback, evidence budgets, report citation resolution, API denial
 blank/null manager records, and source-aware suggestion matching. The Ollama HTTP
 contract is mocked; a real model was not installed or benchmarked here.
 
-`node --check access_review/web_assets/app.js` passed. Browser visual/smoke QA
-could not run because the workspace has no Chromium executable; this remains
-a pre-merge check.
+`node --check access_review/web_assets/app.js` passed. Chromium browser smoke QA passed in GitHub Actions on 2026-10-07, covering all
+22 scenario selections, denials/errors, briefings, drafts, stale responses and mobile
+width. Desktop and mobile artifact screenshots were also visually reviewed.
 
 These tests validate the integration and boundaries, not the quality of a model's
 ranking. Before recommending a model, evaluate several synthetic scenarios
@@ -85,5 +85,6 @@ follow when the evidence and evaluation justify them.
 A runnable five-case suite and recorded deterministic baseline are now available in
 [evaluation/README.md](../evaluation/README.md). Model quality remains unmeasured.
 
-Browser automation is now configured in GitHub Actions; consult the current run
-for its result. Local Chromium remains unavailable.
+Browser automation is configured in GitHub Actions. The first run passed:
+https://github.com/shelovestechy/manager-access-review-assistant/actions/runs/37620009339
+Local Chromium remains unavailable; browser verification used CI.
