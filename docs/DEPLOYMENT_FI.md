@@ -1,12 +1,12 @@
-# Käyttöönotto käytännössä: sovellus, Copilot-agentti ja oikeudet
+# Tulevan käyttöönoton suunnitteluharjoitus: sovellus, Copilot-agentti ja oikeudet
 
-**Tila:** suunnitelma, ei toteutettu tuotantointegraatio.  
+**Tila:** oppimis- ja arkkitehtuuriharjoitus. Ei toteutettu tuotantointegraatio eikä käyttöönottovalmiin ratkaisun ohje.  
 **Dokumentaation tarkistuspäivä:** 7.10.2026.  
 **Esimerkkiorganisaatio:** Ankkalinna Identity Lab Oy.
 
 ## 1. Mikä tämä olisi yrityksessä?
 
-Assistant olisi **kirjautumista edellyttävä, vain tietoja lukeva käyttöoikeuksien tarkastelupalvelu**. Roope Ankka voisi avata Akun raportin, nähdä mistä tiedot tulevat ja valmistella ICT:lle pyynnön. Oikeuksia ei muuteta eikä tikettiä lähetetä automaattisesti.
+Mahdollinen tuleva toteutus voisi olla **kirjautumista edellyttävä, vain tietoja lukeva käyttöoikeuksien tarkastelupalvelu**. Roope Ankka voisi avata Akun raportin, nähdä mistä tiedot tulevat ja valmistella ICT:lle pyynnön. Oikeuksia ei muuteta eikä tikettiä lähetetä automaattisesti.
 
 Nykyinen Python-sovellus on paikallinen demo. Siinä esihenkilön tunnus kirjoitetaan itse ja tiedot tulevat JSON-esimerkeistä. Tämä havainnollistaa tarkistussääntöä, mutta ei todista käyttäjän henkilöllisyyttä.
 
