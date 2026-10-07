@@ -2,7 +2,7 @@
 
 ## Trust boundary
 
-The assistant is a read-only decision-support component. It may collect entitlement metadata and employee context, but it is not authorized to grant, revoke, approve, deny, or submit access changes.
+The current prototype models a read-only decision-support component. In this repository it operates on synthetic data only; live collection and production authorization are not implemented. The intended design may collect entitlement metadata and employee context, but it is not authorized to grant, revoke, approve, deny, or submit access changes.
 
 The only output that resembles an action is plain-text content for a Service Desk request. The manager must review it and use an approved organizational channel. ICT or Service Desk remains responsible for validation and implementation.
 
@@ -31,9 +31,9 @@ This relationship check is necessary but not sufficient for production. The appl
 | Stale manager or expiry data | Show collection time in live reports and re-check authorization for each request. |
 | Credential leakage | Use environment variables or a secret store; never commit credentials or tenant-specific secrets. |
 
-## Planned live integration
+## Planned future lab integration
 
-Before enabling a live connection:
+If this learning project is later extended into a dedicated lab environment:
 
 1. Register a separate application in a lab tenant.
 2. Identify the minimum delegated permissions for the signed-in manager workflow.
