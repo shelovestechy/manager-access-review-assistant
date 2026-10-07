@@ -98,6 +98,23 @@ class WebDemoTests(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertIn("at most 200 characters", body["error"])
 
+    def test_summary_reauthorizes_instead_of_trusting_browser_report(self):
+        status, body = self.post("/api/summary", {
+            "user_id": "matti.meikalainen", "requester_id": "other.manager",
+            "authorization": {"authorized": True},
+        })
+        self.assertEqual(status, 403)
+        self.assertNotIn("evidence", body)
+
+    def test_authorized_summary_is_cited_and_offline_by_default(self):
+        status, body = self.post("/api/summary", {
+            "user_id": "matti.meikalainen", "requester_id": "liisa.esihenkilo",
+            "as_of": "2026-10-07",
+        })
+        self.assertEqual(status, 200)
+        self.assertEqual(body["mode"], "deterministic")
+        self.assertEqual(len(body["evidence"]), 6)
+
     def post(self, path: str, payload: dict) -> tuple[int, dict]:
         request = Request(
             f"{self.base_url}{path}",
@@ -114,3 +131,4 @@ class WebDemoTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

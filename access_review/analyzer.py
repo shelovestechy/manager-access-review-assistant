@@ -84,6 +84,9 @@ def _find_employee(snapshot: Snapshot, user_id: str) -> Employee:
 
 
 def _authorize_direct_manager(employee: Employee, requester_id: str) -> None:
+    identifiers = (requester_id, employee.ad_manager_id, employee.entra_manager_id)
+    if any(not isinstance(value, str) or not value.strip() for value in identifiers):
+        raise PermissionError("access denied: non-empty manager identities required in both AD and Entra ID")
     normalized_requester = requester_id.casefold()
     ad_match = employee.ad_manager_id.casefold() == normalized_requester
     entra_match = employee.entra_manager_id.casefold() == normalized_requester
@@ -160,14 +163,15 @@ def _access_suggestions(
     current_entitlements: list[Entitlement],
     profiles: tuple[AccessProfile, ...],
 ) -> list[dict[str, Any]]:
-    current_names = {item.name.casefold() for item in current_entitlements}
-    suggestions: dict[str, dict[str, Any]] = {}
+    current_names = {(item.source.casefold(), item.resource_type.casefold(), item.name.casefold())
+                     for item in current_entitlements}
+    suggestions: dict[tuple[str, str, str], dict[str, Any]] = {}
     for profile in profiles:
         matched_attributes = _matched_profile_attributes(employee, profile)
         if matched_attributes is None:
             continue
         for suggestion in profile.suggestions:
-            key = suggestion.name.casefold()
+            key = (suggestion.source.casefold(), suggestion.resource_type.casefold(), suggestion.name.casefold())
             if key in current_names:
                 continue
             suggestions[key] = {
@@ -225,3 +229,4 @@ def _as_report_item(entitlement: Entitlement) -> dict[str, Any]:
         "purpose": entitlement.purpose or None,
         "risk_tags": list(entitlement.risk_tags),
     }
+

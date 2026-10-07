@@ -11,3 +11,14 @@
 - Added restrictive browser security headers and local-only default binding.
 - Added automated authorization, analysis, API, and safety-boundary tests.
 - Added GitHub Actions continuous integration and architecture/security documentation.
+
+
+
+## Unreleased — evidence-backed briefing
+
+- Added cited briefings and opt-in local Ollama evidence ordering.
+- Validate model output as an exact permutation; preserve every finding on failure.
+- Show elapsed time, call count, and explicit snapshot coverage limitations.
+- Reject blank/non-string manager identities and avoid cross-source suggestion-name collisions.
+- Bind draft and briefing requests to the opened review's identities.
+- Added regression, model-contract, transport, and API authorization tests.

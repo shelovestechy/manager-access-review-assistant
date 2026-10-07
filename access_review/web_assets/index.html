@@ -75,6 +75,15 @@
           <article class="metric-card info"><span>Suggestions</span><strong id="metric-suggestions">0</strong></article>
         </div>
 
+        <section class="panel section-block" aria-labelledby="briefing-title">
+          <div class="panel-heading">
+            <div><p class="panel-kicker">Evidence-backed briefing</p><h3 id="briefing-title">What needs attention?</h3></div>
+            <button id="summary-button" class="secondary-button" type="button">Prepare briefing</button>
+          </div>
+          <p class="muted">A concise view of the recorded findings. Every point includes its source.</p>
+          <div id="summary-result" role="status" aria-live="polite" hidden></div>
+        </section>
+
         <div class="dashboard-grid">
           <article id="account-card" class="panel account-card">
             <div class="panel-heading">
@@ -163,3 +172,4 @@
     </footer>
   </body>
 </html>
+

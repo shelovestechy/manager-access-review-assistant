@@ -11,6 +11,7 @@ from urllib.parse import urlsplit
 
 from .analyzer import analyze_access
 from .repository import load_snapshot
+from .summary import OllamaRanker, summarize_report
 from .service_desk import build_access_change_draft
 
 
@@ -19,7 +20,7 @@ DEFAULT_SNAPSHOT = Path(__file__).with_name("demo_data") / "sample_access_snapsh
 MAX_REQUEST_BYTES = 64 * 1024
 
 
-def make_handler(snapshot_path: str | Path):
+def make_handler(snapshot_path: str | Path, *, summary_ranker=None):
     snapshot = load_snapshot(snapshot_path)
 
     class AccessReviewHandler(BaseHTTPRequestHandler):
@@ -57,6 +58,10 @@ def make_handler(snapshot_path: str | Path):
             path = urlsplit(self.path).path
             try:
                 payload = self._read_json()
+                if path == "/api/summary":
+                    report = _create_review(snapshot, payload)
+                    self._send_json(HTTPStatus.OK, summarize_report(report, summary_ranker))
+                    return
                 if path == "/api/review":
                     report = _create_review(snapshot, payload)
                     self._send_json(HTTPStatus.OK, report)
@@ -183,12 +188,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--snapshot", type=Path, default=DEFAULT_SNAPSHOT, help="Synthetic snapshot path"
     )
+    parser.add_argument("--ollama-model", help="Optional locally installed model for evidence ordering")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    server = ThreadingHTTPServer((args.host, args.port), make_handler(args.snapshot))
+    ranker = OllamaRanker(args.ollama_model) if args.ollama_model else None
+    server = ThreadingHTTPServer((args.host, args.port), make_handler(args.snapshot, summary_ranker=ranker))
     print(f"Read-only demo: http://{args.host}:{args.port}")
     print("Press Ctrl+C to stop.")
     try:
@@ -202,3 +209,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

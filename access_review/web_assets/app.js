@@ -4,16 +4,26 @@ const reviewSection = document.querySelector("#review");
 const message = document.querySelector("#message");
 const draftResult = document.querySelector("#draft-result");
 let currentReview = null;
+let reviewPayload = null;
+let reviewGeneration = 0;
 
 reviewForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   hideMessage();
   draftResult.hidden = true;
+  currentReview = null;
+  reviewPayload = null;
+  reviewGeneration += 1;
+  reviewSection.hidden = true;
+  document.querySelector("#summary-result").hidden = true;
+  document.querySelector("#summary-button").disabled = false;
   const button = reviewForm.querySelector("button[type='submit']");
   button.disabled = true;
   button.textContent = "Verifying manager…";
   try {
-    const report = await postJson("/api/review", basePayload());
+    const payload = basePayload();
+    const report = await postJson("/api/review", payload);
+    reviewPayload = payload;
     currentReview = report;
     renderReview(report);
     reviewSection.hidden = false;
@@ -40,7 +50,7 @@ draftForm.addEventListener("submit", async (event) => {
   }
   try {
     const response = await postJson("/api/service-desk-draft", {
-      ...basePayload(),
+      ...reviewPayload,
       additions,
       removals,
       reason: document.querySelector("#reason").value.trim(),
@@ -201,3 +211,36 @@ function hideMessage() {
   message.hidden = true;
   message.textContent = "";
 }
+
+
+
+document.querySelector("#summary-button").addEventListener("click", async () => {
+  if (!currentReview || !reviewPayload) return;
+  const generation = reviewGeneration;
+  const button = document.querySelector("#summary-button");
+  const target = document.querySelector("#summary-result");
+  button.disabled = true;
+  target.hidden = false;
+  target.textContent = "Preparing briefing…";
+  try {
+    const briefing = await postJson("/api/summary", reviewPayload);
+    if (generation !== reviewGeneration) return;
+    const modes = {deterministic: "Rule-based briefing", model_ordered: "AI-ordered evidence", fallback: "Rule-based fallback — AI unavailable or response rejected"};
+    const list = element("ul", {className: "evidence-list"});
+    briefing.evidence.forEach((item) => {
+      const row = element("li");
+      row.append(element("p", {}, item.text), element("small", {}, `${item.id} · ${item.source} · Report: ${item.report_path}`));
+      list.append(row);
+    });
+    target.replaceChildren(
+      element("h4", {}, modes[briefing.mode]),
+      element("p", {}, briefing.overview), list,
+      element("p", {className: "muted"}, briefing.coverage_notice),
+      element("small", {}, `${briefing.metrics.duration_ms} ms · ${briefing.metrics.model_calls} model calls · ${briefing.metrics.evidence_count} evidence items`),
+    );
+  } catch (error) {
+    if (generation === reviewGeneration) target.textContent = error.message;
+  } finally {
+    if (generation === reviewGeneration) button.disabled = false;
+  }
+});
