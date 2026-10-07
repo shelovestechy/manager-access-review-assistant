@@ -4,7 +4,7 @@ An explainable, human-in-the-loop prototype that helps a verified direct manager
 
 > **Project status:** Portfolio demo with an evidence-backed briefing. The default uses synthetic JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a tenant, open tickets, or change access.
 
-*The existing screenshot predates the Ankkalinna naming and briefing changes; it will be refreshed after browser QA.*
+
 
 ## Demo organization
 
