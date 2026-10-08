@@ -20,6 +20,15 @@ let browser;
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:8877');
   await page.waitForFunction(() => document.querySelector('#scenario-select').options.length === 23);
+
+  const fonts = await page.evaluate(async () => {
+    const regular = await document.fonts.load('400 16px Inter');
+    const semibold = await document.fonts.load('600 16px Inter');
+    return {regular:regular.length, semibold:semibold.length,
+      background:getComputedStyle(document.body).backgroundColor,
+      heading:getComputedStyle(document.querySelector('h1')).fontWeight};
+  });
+  assert.deepEqual(fonts,{regular:1,semibold:1,background:'rgb(248, 249, 250)',heading:'600'});
   const cases=JSON.parse(readFileSync('scenarios/cases.json','utf8')).cases;
   for (const item of cases) {
     const responsePromise=page.waitForResponse(r=>r.url().endsWith('/api/review'));

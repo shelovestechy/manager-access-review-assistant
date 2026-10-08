@@ -152,7 +152,7 @@ function accessRow(item) {
     identity,
     element("small", {}, item.source),
     element("span", { className: "assignment" }, item.assignment),
-    element("span", { className: "finding" }, item.evidence ? item.evidence.join(" · ") : item.purpose || "Purpose not documented"),
+    element("span", { className: item.evidence?.length ? "finding needs-review" : "finding" }, item.evidence ? item.evidence.join(" · ") : item.purpose || "Purpose not documented"),
   );
   return row;
 }

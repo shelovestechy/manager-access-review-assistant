@@ -151,7 +151,7 @@ def make_handler(snapshot_path: str | Path, *, summary_ranker=None, scenario_man
             self.send_header(
                 "Content-Security-Policy",
                 "default-src 'self'; script-src 'self'; style-src 'self'; "
-                "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; "
+                "font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; "
                 "base-uri 'none'; form-action 'self'",
             )
             if no_store:
