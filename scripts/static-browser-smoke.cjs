@@ -12,14 +12,17 @@ const assert=require('node:assert/strict');
   await page.goto(pathToFileURL(resolve('demo/index.html')).href);
   await page.waitForFunction(()=>document.querySelector('#scenario-select').options.length===23);
 
-  const fonts = await page.evaluate(async () => {
-    const regular = await document.fonts.load('400 16px Inter');
-    const semibold = await document.fonts.load('600 16px Inter');
-    return {regular:regular.length, semibold:semibold.length,
+  const typography = await page.evaluate(() => {
+    return {fontFamily:getComputedStyle(document.body).fontFamily,
+      bundledFaces:document.fonts.size,
       background:getComputedStyle(document.body).backgroundColor,
       heading:getComputedStyle(document.querySelector('h1')).fontWeight};
   });
-  assert.deepEqual(fonts,{regular:1,semibold:1,background:'rgb(248, 249, 250)',heading:'600'});
+  assert.match(typography.fontFamily,/Segoe UI Variable/);
+  assert.deepEqual(
+    {bundledFaces:typography.bundledFaces,background:typography.background,heading:typography.heading},
+    {bundledFaces:0,background:'rgb(245, 245, 245)',heading:'600'}
+  );
   await page.selectOption('#scenario-select','hansu-seasonal');
   await page.locator('#expiry-request').waitFor({state:'visible'});
   assert.match(await page.locator('#expiry-draft').textContent(),/Hansu Hanhi/);
