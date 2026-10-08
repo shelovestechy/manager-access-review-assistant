@@ -114,7 +114,7 @@ class AnalyzerTests(unittest.TestCase):
 
     def test_text_report_repeats_human_decision_boundary(self) -> None:
         rendered = format_text_report(self.analyze())
-        self.assertIn("cannot grant, remove, approve, or deny access", rendered)
+        self.assertIn("cannot grant, remove, approve or deny access", rendered)
         self.assertIn("Service Desk account-expiry draft", rendered)
 
 

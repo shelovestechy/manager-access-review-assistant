@@ -69,7 +69,7 @@ def analyze_access(
             "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process."
         ),
         "decision_boundary": (
-            "Decision support only. The assistant cannot grant, remove, approve, or deny access."
+            "Decision support only. The assistant cannot grant, remove, approve or deny access."
         ),
     }
 

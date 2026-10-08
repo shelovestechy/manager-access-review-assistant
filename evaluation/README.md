@@ -24,9 +24,9 @@ receives no model-quality score. No outbound model call occurs in the first comm
 python -m access_review.web --snapshot evaluation/department-transfer.json
 ```
 
-Use `aku.ankka`, manager `roope.ankka`, and date `2026-10-07`.
+Use `aku.ankka`, manager `roope.ankka` and date `2026-10-07`.
 Select **Prepare briefing**. Expected findings: legacy finance administrator access,
-finance mailbox access, and a possible Sales CRM addition. No change is performed.
+finance mailbox access and a possible Sales CRM addition. No change is performed.
 
 ## Cases and rubric
 
@@ -40,7 +40,7 @@ finance mailbox access, and a possible Sales CRM addition. No change is performe
 
 `cases.json` stores explicit draft priority tiers; lower means earlier and ties are
 intentional. Pairwise accuracy counts strictly ordered pairs only. Empty or tied-only
-cases have no ranking score. Missing, duplicate, or unlabelled evidence fails the
+cases have no ranking score. Missing, duplicate or unlabelled evidence fails the
 benchmark rather than being silently ignored. The rubric is an engineering draft,
 not an independent expert assessment or proof of correct access decisions.
 
@@ -54,5 +54,5 @@ that AI improves outcomes. A real-model result is deliberately not reported.
 
 For a real comparison record model digest, Ollama version, hardware, repeat count,
 per-case scores, failures and latency. Keep the deterministic implementation if the
-model does not offer a useful improvement. Snapshot freshness, authenticated login,
+model does not offer a useful improvement. Snapshot freshness, authenticated login
 and live adapters remain separate work.

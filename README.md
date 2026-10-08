@@ -2,7 +2,7 @@
 
 An explainable, human-in-the-loop **learning and portfolio prototype** for exploring IAM, security, automation and bounded AI-assisted decision support.
 
-> **Project status:** Design-and-testing stage. This repository is a learning project, not a production IAM system or a deployed enterprise service. The current demo uses only synthetic Ankkalinna JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a real tenant, authenticate real users, open tickets, or change access.
+> **Project status:** Design-and-testing stage. This repository is a learning project, not a production IAM system or a deployed enterprise service. The current demo uses only synthetic Ankkalinna JSON data and a deterministic rule engine. An optional local Ollama model can order existing evidence. It does not connect to a real tenant, authenticate real users, open tickets or change access.
 
 ## What I am learning with this project
 
@@ -28,19 +28,19 @@ The employee is **Aku Ankka** (`aku.ankka`) and the manager is **Roope Ankka**
 
 ## Why this project exists
 
-Managers often need to review access without having one clear view of what an employee already has. Relevant permissions may be spread across Entra ID, Active Directory, Microsoft 365 groups, distribution groups, shared mailboxes, Teams, and SharePoint.
+Managers often need to review access without having one clear view of what an employee already has. Relevant permissions may be spread across Entra ID, Active Directory, Microsoft 365 groups, distribution groups, shared mailboxes, Teams and SharePoint.
 
-This project brings those signals into one report. It highlights items that deserve human review, warns about an approaching AD account expiry, proposes possible missing access from documented role and location profiles, and creates a Service Desk request draft when the manager explicitly selects a change.
+This project brings those signals into one report. It highlights items that deserve human review, warns about an approaching AD account expiry, proposes possible missing access from documented role and location profiles and creates a Service Desk request draft when the manager explicitly selects a change.
 
 ## Non-negotiable boundary
 
-The assistant cannot grant, remove, approve, or deny access. It cannot submit a ticket. The verified manager chooses what to request, and ICT or Service Desk validates and implements the change through the organization's normal process.
+The assistant cannot grant, remove, approve or deny access. It cannot submit a ticket. The verified manager chooses what to request, and ICT or Service Desk validates and implements the change through the organization's normal process.
 
 ## Why the prototype baseline is deterministic
 
-Identity decisions are high-impact. The current prototype therefore keeps authorization, expiry calculation, anomaly flags, and access-profile matching deterministic and testable. This is the evidence layer an AI summary can safely sit on top of later.
+Identity decisions are high-impact. The current prototype therefore keeps authorization, expiry calculation, anomaly flags and access-profile matching deterministic and testable. This is the evidence layer an AI summary can safely sit on top of later.
 
-The optional language-model layer orders existing findings for a manager briefing. It returns evidence IDs only; the server validates that every ID appears exactly once and renders the original facts. It cannot generate new access facts, omit findings, or call tools. Without a model, or if its output is invalid, a deterministic briefing remains available. This is AI-assisted evidence ordering, not free-form generative summarization.
+The optional language-model layer orders existing findings for a manager briefing. It returns evidence IDs only; the server validates that every ID appears exactly once and renders the original facts. It cannot generate new access facts, omit findings or call tools. Without a model, or if its output is invalid, a deterministic briefing remains available. This is AI-assisted evidence ordering, not free-form generative summarization.
 
 ## Manager authorization
 
@@ -50,12 +50,12 @@ The MVP demonstrates this check with synthetic attributes. A live version must p
 
 ## Example capabilities
 
-- Classify current access as role-aligned, organization-wide, or requiring review.
+- Classify current access as role-aligned, organization-wide or requiring review.
 - Distinguish direct and transitive membership.
 - Show the AD account expiry date and warn when it is 90 days or less away.
 - Compare account expiry with the recorded contract end date.
 - Create an informational Service Desk draft when dates should be verified.
-- Suggest possible missing groups based on job title, department, or office location.
+- Suggest possible missing groups based on job title, department or office location.
 - Explain the exact attributes behind each suggestion.
 - Create an addition/removal request draft only from changes explicitly chosen by the manager.
 
@@ -81,7 +81,7 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000) and use the pre-filled synth
 - employee: `aku.ankka`
 - review date: `2026-10-07`
 
-The browser application supports the complete demo flow: manager verification, access inventory, account-expiry warning, attribute-based suggestions, and a copyable Service Desk draft. It runs on localhost. By default it makes no model calls. Select **Prepare briefing** after opening a review to see cited findings and timing.
+The browser application supports the complete demo flow: manager verification, access inventory, account-expiry warning, attribute-based suggestions and a copyable Service Desk draft. It runs on localhost. By default it makes no model calls. Select **Prepare briefing** after opening a review to see cited findings and timing.
 
 ## Optional local AI ordering
 
@@ -91,11 +91,11 @@ With Ollama running locally and a local model already installed, start:
 python -m access_review.web --ollama-model YOUR_LOCAL_MODEL
 ```
 
-Use your installed model name. The application calls only `127.0.0.1:11434`, disables HTTP proxies and redirects, and rejects model names containing `cloud`. Configure Ollama itself for local-only operation; a loopback address alone cannot prove that its service does not forward data. Keep using synthetic data.
+Use your installed model name. The application calls only `127.0.0.1:11434`, disables HTTP proxies and redirects and rejects model names containing `cloud`. Configure Ollama itself for local-only operation; a loopback address alone cannot prove that its service does not forward data. Keep using synthetic data.
 
-The briefing displays its mode (rule-based, AI-ordered, or fallback), report-path citations, elapsed time, and attempted model calls. Source collection timestamps and completeness are currently unknown and are explicitly labelled. It makes no monetary savings claims.
+The briefing displays its mode (rule-based, AI-ordered or fallback), report-path citations, elapsed time and attempted model calls. Source collection timestamps and completeness are currently unknown and are explicitly labelled. It makes no monetary savings claims.
 
-See [AI briefing design and evaluation](docs/AI_BRIEFING.md) for boundaries, budgets, tests, and remaining work.
+See [AI briefing design and evaluation](docs/AI_BRIEFING.md) for boundaries, budgets, tests and remaining work.
 
 ## Run the CLI
 
@@ -130,7 +130,7 @@ Run the full test suite:
 python -m unittest discover -s tests -v
 ```
 
-The suite covers manager authorization, conflicting directory records, expiry and contract-date warnings, explainable suggestions, Service Desk draft boundaries, HTTP security headers, API denial behavior, and the browser demo backend. GitHub Actions runs the same suite for every push and pull request.
+The suite covers manager authorization, conflicting directory records, expiry and contract-date warnings, explainable suggestions, Service Desk draft boundaries, HTTP security headers, API denial behavior and the browser demo backend. GitHub Actions runs the same suite for every push and pull request.
 
 ## Architecture
 
@@ -154,9 +154,9 @@ Manager-friendly report
 Optional Service Desk draft ----> human validation and implementation
 ```
 
-Collection, authorization, analysis, and presentation are kept separate so synthetic data can later be replaced by Microsoft Graph and lab Active Directory adapters without making the analysis layer capable of changing access.
+Collection, authorization, analysis and presentation are kept separate so synthetic data can later be replaced by Microsoft Graph and lab Active Directory adapters without making the analysis layer capable of changing access.
 
-See [Architecture](docs/ARCHITECTURE.md) for trust boundaries, request flows, and the planned live-adapter design.
+See [Architecture](docs/ARCHITECTURE.md) for trust boundaries, request flows and the planned live-adapter design.
 
 ## Current deterministic rules
 
@@ -189,7 +189,7 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 
 ## Completed prototype scope
 
-- [x] Synthetic data model, explainable analysis, CLI, and tests
+- [x] Synthetic data model, explainable analysis, CLI and tests
 - [x] Dual-source direct-manager authorization check
 - [x] AD account expiry warning and Service Desk notice draft
 - [x] Attribute-based access suggestions with evidence
@@ -207,7 +207,7 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 - [x] Optional local LLM ordering of cited evidence with deterministic fallback
 - [ ] Evaluate ordering quality with a real local model
 - [ ] Free-form grounded summaries, if justified by evaluation
-- [ ] Audit logging, role-based access, and review export
+- [ ] Audit logging, role-based access and review export
 
 These integrations are deliberately outside the synthetic portfolio demo. They are future learning work and would require a dedicated lab tenant, explicit permission review, authentication design and tenant-specific configuration. The current repository demonstrates the concept without them.
 
@@ -218,17 +218,17 @@ These integrations are deliberately outside the synthetic portfolio demo. They a
 - Authorization based on verified organizational relationships
 - Explainable decision support instead of autonomous authorization
 - Contract/account lifecycle mismatch detection
-- Least privilege, data minimization, and human oversight
+- Least privilege, data minimization and human oversight
 
 ## Disclaimer
 
-This is a self-directed learning, portfolio and lab project for studying IAM, security, automation and bounded AI assistance. It is not a production authorization system, a deployed access-review service, or evidence of production IAM engineering experience. The included identities and access data are fictional. Findings and suggestions may contain false positives, and any real-world access decision would require approved organizational policy, authoritative data and qualified human review.
+This is a self-directed learning, portfolio and lab project for studying IAM, security, automation and bounded AI assistance. It is not a production authorization system, a deployed access-review service or evidence of production IAM engineering experience. The included identities and access data are fictional. Findings and suggestions may contain false positives, and any real-world access decision would require approved organizational policy, authoritative data and qualified human review.
 
 
 ## Repeatable Ankkalinna evaluation
 
 Five synthetic scenarios now exercise department transfer, imminent expiry, mixed
-findings, untrusted directory text, and empty evidence. Run
+findings, untrusted directory text and empty evidence. Run
 `python -m access_review.evaluate` from the repository root. See
 [evaluation instructions and baseline](evaluation/README.md).
 
@@ -238,7 +238,7 @@ The combined organization dataset contains **12 employees**, including Mikki Hii
 Taavi Ankka and Hansu Hanhi. Hansu reports to Mummo Ankka; the other demo employees
 report to Roope Ankka. The standalone suite adds **22 acceptance cases** for joiners,
 role changes, seasonal work, inherited access, mail resources, lifecycle boundaries,
-manager conflicts, unauthorized requesters, and duplicate identity data.
+manager conflicts, unauthorized requesters and duplicate identity data.
 
 ```powershell
 python -m access_review.web --snapshot access_review/demo_data/ankkalinna_organization.json
