@@ -21,12 +21,25 @@ The architecture documents include ideas for possible future lab integrations. T
 
 ## Browser demo — no installation
 
-For a quick presentation, download [demo/index.html](demo/index.html) with GitHub's
+**[Open the GitHub Pages presentation demo](https://shelovestechy.github.io/manager-access-review-assistant/)**
+
+For an offline presentation, download [demo/index.html](demo/index.html) with GitHub's
 **Download raw file** button and open it in your browser. It includes the Ankkalinna
 case selector, prepared reports and Service Desk drafts. No Python, login or AI
-model is needed. This is a synthetic presentation, not a live access-review service.
+model is needed. Every identity, permission, finding and result comes from a fixed,
+self-made synthetic dataset. This is a presentation, not a live access-review service.
 See [browser demo instructions](docs/BROWSER_DEMO.md) for the two-minute walkthrough
 and GitHub Pages setup.
+
+| | Static Pages presentation | Python learning prototype |
+|---|---|---|
+| Purpose | Safe, immediately viewable portfolio walkthrough | Deterministic analysis, manager checks and request-draft logic |
+| Runtime | One self-contained HTML file | Local Python application |
+| Data | Fixed, precomputed Ankkalinna examples | Synthetic JSON snapshots analyzed at request time |
+| Connections | No backend, tenant, login or live API calls | Localhost only; no production integrations |
+
+The Pages site presents the concept; it is not a hosted copy of the Python application.
+The Python prototype remains the technical learning project.
 
 ## Demo organization
 
@@ -44,6 +57,8 @@ This project brings those signals into one report. It highlights items that dese
 ## Non-negotiable boundary
 
 The assistant cannot grant, remove, approve or deny access. It cannot submit a ticket. The verified manager chooses what to request, and ICT or Service Desk validates and implements the change through the organization's normal process.
+
+A possible real version would remain read-only and use only explicitly allowed data retrieval paths. It would not perform unrestricted directory searches or submit requests. People and the organization's normal processes would retain control of every request and access decision.
 
 ## Why the prototype baseline is deterministic
 

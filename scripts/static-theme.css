@@ -1,0 +1,27 @@
+/* Extra presentation components for the public, synthetic Pages demo only. */
+.demo-notice {
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  max-width: 630px;
+  padding: 15px 17px;
+}
+.demo-notice p { color: var(--muted); font-size: 13px; margin: 0; }
+.notice-icon {
+  align-items: center;
+  background: var(--accent-soft);
+  border-radius: 50%;
+  color: var(--navy);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  height: 25px;
+  justify-content: center;
+  width: 25px;
+}
+.concept-note { color: #DCE2E7; font-size: 13px; }

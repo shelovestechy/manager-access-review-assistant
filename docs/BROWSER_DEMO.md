@@ -26,7 +26,13 @@ If clipboard access is unavailable, select the draft and copy it manually.
 The `Browser demo` workflow builds and tests the standalone file before deployment.
 Pages must use **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 If Pages is not enabled, an administrator must select that setting once, then rerun
-the workflow. A URL is ready to share only after deployment succeeds.
+the workflow. After a successful deployment, the demo is available at
+<https://shelovestechy.github.io/manager-access-review-assistant/>.
+
+The Pages version is the static presentation layer. The local Python application is
+the separate learning prototype: it runs the deterministic analysis and manager
+checks against synthetic JSON at request time. Pages uses precomputed versions of
+those synthetic results and has no Python backend or live integrations.
 
 ## Maintenance
 
