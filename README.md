@@ -19,6 +19,15 @@ The architecture documents include ideas for possible future lab integrations. T
 
 
 
+## Browser demo — no installation
+
+For a quick presentation, download [demo/index.html](demo/index.html) with GitHub's
+**Download raw file** button and open it in your browser. It includes the Ankkalinna
+case selector, prepared reports and Service Desk drafts. No Python, login or AI
+model is needed. This is a synthetic presentation, not a live access-review service.
+See [browser demo instructions](docs/BROWSER_DEMO.md) for the two-minute walkthrough
+and GitHub Pages setup.
+
 ## Demo organization
 
 All employees and resources belong to the fictional **Ankkalinna Identity Lab Oy**.
@@ -266,3 +275,4 @@ manual snapshot workflow remains available and the catalogue is empty.
 
 GitHub Actions now includes `scripts/browser-smoke.cjs` to exercise all cases,
 mobile overflow, briefings, drafts and stale-response handling with Chromium.
+

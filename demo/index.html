@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Manager Access Review Assistant</title>
+    <link rel="icon" href="data:,">
+    <style>:root {
+  --ink: #15263d;
+  --muted: #64748b;
+  --line: #dbe3ed;
+  --surface: #ffffff;
+  --canvas: #f4f7fb;
+  --navy: #102a43;
+  --blue: #2563eb;
+  --blue-soft: #eaf1ff;
+  --green: #0f8a5f;
+  --green-soft: #e7f7f0;
+  --amber: #b45309;
+  --amber-soft: #fff4df;
+  --red: #b42318;
+  --red-soft: #fff0ee;
+  --shadow: 0 18px 50px rgba(21, 38, 61, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+
+.topbar {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  padding: 16px max(24px, calc((100vw - 1180px) / 2));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand { align-items: center; color: var(--navy); display: flex; font-weight: 750; gap: 10px; text-decoration: none; }
+.brand-mark { align-items: center; background: var(--navy); border-radius: 10px; color: white; display: inline-flex; font-size: 12px; height: 34px; justify-content: center; letter-spacing: .04em; width: 34px; }
+.status-pill, .source-badge, .verified-badge, .tag { align-items: center; border-radius: 999px; display: inline-flex; font-size: 12px; font-weight: 700; gap: 7px; padding: 7px 11px; }
+.status-pill { background: var(--green-soft); color: #08734d; }
+.status-dot { background: #16a26d; border-radius: 50%; height: 7px; width: 7px; }
+
+main { margin: 0 auto; max-width: 1180px; padding: 0 24px 72px; }
+.hero { align-items: center; display: grid; gap: 72px; grid-template-columns: 1.25fr .75fr; min-height: 640px; padding: 72px 0; }
+.hero-copy { max-width: 660px; }
+.eyebrow, .panel-kicker, .form-kicker { color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .12em; margin: 0 0 10px; text-transform: uppercase; }
+h1 { color: var(--navy); font-size: clamp(48px, 7vw, 76px); letter-spacing: -.055em; line-height: .98; margin: 0; }
+.lede { color: var(--muted); font-size: 19px; line-height: 1.7; margin: 26px 0 0; max-width: 620px; }
+h2, h3 { color: var(--navy); letter-spacing: -.025em; margin: 0; }
+h2 { font-size: 30px; }
+h3 { font-size: 19px; }
+.muted { color: var(--muted); }
+
+.review-form, .panel, .metric-card, .request-builder { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+.review-form { padding: 28px; }
+.form-heading, .panel-heading, .draft-heading { align-items: flex-start; display: flex; justify-content: space-between; margin-bottom: 22px; }
+.form-kicker, .panel-kicker { color: var(--muted); letter-spacing: .09em; margin-bottom: 5px; }
+.source-badge { background: var(--blue-soft); color: var(--blue); }
+label { color: #34465e; display: grid; font-size: 13px; font-weight: 700; gap: 7px; margin-top: 16px; }
+input, textarea { background: #fbfdff; border: 1px solid #cdd8e5; border-radius: 10px; color: var(--ink); outline: none; padding: 11px 12px; transition: border .15s, box-shadow .15s; width: 100%; }
+input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+.primary-button { align-items: center; background: var(--blue); border: 0; border-radius: 10px; color: white; display: flex; font-weight: 750; justify-content: space-between; margin-top: 22px; padding: 12px 16px; width: 100%; }
+.primary-button:hover { background: #1d4ed8; }
+.primary-button:disabled { cursor: progress; opacity: .65; }
+.form-note { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 13px 0 0; }
+
+.message { background: var(--red-soft); border: 1px solid #ffc9c3; border-radius: 12px; color: var(--red); font-weight: 650; margin-bottom: 24px; padding: 14px 16px; }
+.review { animation: reveal .35s ease-out; scroll-margin-top: 88px; }
+@keyframes reveal { from { opacity: 0; transform: translateY(8px); } }
+.review-header { align-items: flex-end; display: flex; justify-content: space-between; margin-bottom: 24px; }
+.verified-badge { background: var(--green-soft); color: var(--green); }
+.metrics { display: grid; gap: 14px; grid-template-columns: repeat(4, 1fr); }
+.metric-card { box-shadow: none; padding: 20px; }
+.metric-card span { color: var(--muted); display: block; font-size: 13px; font-weight: 650; }
+.metric-card strong { color: var(--navy); display: block; font-size: 35px; margin-top: 6px; }
+.metric-card.good { border-top: 4px solid var(--green); }
+.metric-card.warning { border-top: 4px solid #e99a25; }
+.metric-card.info { border-top: 4px solid var(--blue); }
+
+.dashboard-grid { display: grid; gap: 18px; grid-template-columns: 1.35fr .65fr; margin-top: 18px; }
+.panel { box-shadow: none; padding: 24px; }
+.tag { background: #edf2f7; color: var(--navy); text-transform: capitalize; }
+.tag.warning { background: var(--amber-soft); color: var(--amber); }
+.tag.danger { background: var(--red-soft); color: var(--red); }
+.tag.good { background: var(--green-soft); color: var(--green); }
+.expiry-row { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+.expiry-row span { color: var(--muted); display: block; font-size: 12px; }
+.expiry-row strong { display: block; font-size: 17px; margin-top: 5px; }
+.evidence-list { color: var(--amber); font-size: 13px; margin: 18px 0 0; padding-left: 20px; }
+.boundary-card { background: var(--navy); border-color: var(--navy); color: white; }
+.boundary-card h3 { color: white; font-size: 24px; }
+.boundary-card .muted { color: #bfd0e3; font-size: 13px; }
+.boundary-flow { display: grid; font-size: 12px; gap: 8px; grid-template-columns: 1fr auto; margin-top: 20px; }
+.boundary-flow span:nth-child(odd) { background: rgba(255,255,255,.09); border-radius: 8px; padding: 8px 10px; }
+.boundary-flow span:last-child { grid-column: 1; }
+
+.section-block { margin-top: 64px; }
+.section-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 20px; }
+.section-heading > p { color: var(--muted); font-size: 13px; margin: 0; max-width: 410px; text-align: right; }
+.access-groups { display: grid; gap: 18px; }
+.access-group { background: white; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.access-group-heading { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 14px 18px; }
+.access-group-heading h3 { font-size: 16px; }
+.count-badge { background: #edf2f7; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 700; padding: 4px 9px; }
+.access-list { display: grid; }
+.access-item { align-items: center; border-bottom: 1px solid #edf1f6; display: grid; gap: 16px; grid-template-columns: 1.2fr .7fr .8fr 1fr; padding: 15px 18px; }
+.access-item:last-child { border-bottom: 0; }
+.access-name { font-weight: 750; }
+.access-item small { color: var(--muted); }
+.assignment { background: #edf2f7; border-radius: 999px; color: #50647b; font-size: 11px; font-weight: 700; padding: 5px 8px; text-align: center; text-transform: capitalize; }
+.finding { color: var(--amber); font-size: 12px; font-weight: 650; }
+
+.suggestion-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); }
+.suggestion-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+.suggestion-card h3 { margin-bottom: 8px; }
+.suggestion-card p { color: var(--muted); font-size: 13px; margin: 0; }
+.attribute-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.attribute-chip { background: var(--blue-soft); border-radius: 999px; color: var(--blue); font-size: 11px; font-weight: 700; padding: 5px 8px; }
+
+.request-builder { box-shadow: none; display: grid; gap: 32px; grid-template-columns: .7fr 1.3fr; margin-top: 64px; padding: 30px; }
+.request-intro p:not(.eyebrow) { color: var(--muted); font-size: 14px; }
+.draft-form { min-width: 0; }
+.change-columns { display: grid; gap: 22px; grid-template-columns: 1fr 1fr; }
+fieldset { border: 0; margin: 0; min-width: 0; padding: 0; }
+legend { font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+.option-list { background: #f7f9fc; border: 1px solid var(--line); border-radius: 12px; max-height: 210px; overflow: auto; padding: 6px 12px; }
+.option-list label { align-items: center; display: flex; font-size: 12px; font-weight: 600; gap: 9px; margin: 0; padding: 8px 0; }
+.option-list input { margin: 0; width: auto; }
+.empty-state { color: var(--muted); font-size: 12px; padding: 8px 0; }
+.draft-result { border-top: 1px solid var(--line); grid-column: 1 / -1; padding-top: 28px; }
+.secondary-button { background: white; border: 1px solid #cdd8e5; border-radius: 9px; color: var(--navy); font-size: 12px; font-weight: 750; padding: 8px 11px; }
+pre { background: #0d2135; border-radius: 12px; color: #d8e7f5; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; line-height: 1.7; margin: 0; overflow: auto; padding: 20px; white-space: pre-wrap; }
+
+footer { border-top: 1px solid var(--line); color: var(--muted); display: flex; font-size: 12px; justify-content: space-between; margin-top: 72px; padding: 24px max(24px, calc((100vw - 1180px) / 2)); }
+
+@media (max-width: 900px) {
+  .hero { gap: 36px; grid-template-columns: 1fr; padding: 52px 0; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid, .request-builder { grid-template-columns: 1fr; }
+  .request-builder { gap: 24px; }
+}
+
+@media (max-width: 620px) {
+  main { padding-inline: 16px; }
+  .topbar { padding-inline: 16px; }
+  .hero { min-height: 0; }
+  h1 { font-size: 46px; }
+  .metrics, .suggestion-grid, .change-columns, .expiry-row { grid-template-columns: 1fr; }
+  .review-header, .section-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .section-heading > p { text-align: left; }
+  .access-item { grid-template-columns: 1fr auto; }
+  .access-item > :nth-child(3), .access-item > :nth-child(4) { grid-column: 1 / -1; }
+  footer { flex-direction: column; gap: 5px; }
+}
+
+
+/* Scenario navigation stays readable on narrow screens. */
+select { width: 100%; min-width: 0; padding: 12px; border: 1px solid #cad4ce; border-radius: 10px; background: white; color: #24362d; font: inherit; }
+.review-steps { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.review-steps a { color: #24533b; padding: 10px 14px; border: 1px solid #cad4ce; border-radius: 10px; text-decoration: none; }
+#expiry-request { grid-column: 1 / -1; min-width: 0; }
+#expiry-draft { color: var(--navy); white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; padding: 16px; background: #f3f6f3; border-radius: 12px; }
+#inventory, #attention, #request { scroll-margin-top: 20px; }
+
+.request-builder .draft-form { grid-column: 1 / -1; }
+
+</style>
+    
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Manager Access Review Assistant home">
+        <span class="brand-mark" aria-hidden="true">AR</span>
+        <span>Access Review</span>
+      </a>
+      <span class="status-pill"><span class="status-dot"></span>Browser demo</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Ankkalinna Identity Lab Oy · Browser demo</p>
+          <h1>Access reviews that explain themselves.</h1>
+          <p class="form-note">Synthetic presentation demo. No login, live directory connection or AI model call. All reports are prepared examples.</p><p class="lede">
+            Give verified managers one clear view of employee access, account lifecycle
+            and evidence-based suggestions—without allowing the assistant to change anything.
+          </p>
+        </div>
+
+        <form id="review-form" class="review-form">
+          <label for="scenario-select">Ankkalinnan esimerkkitapaus</label>
+          <select id="scenario-select" aria-describedby="scenario-help">
+            <option value="">Aku / nykyinen snapshot — käsin syötettävät tunnukset</option>
+          </select>
+          <p id="scenario-help" class="form-note">Valitse tapaus: tunnukset ja päivä täyttyvät ja tarkistus avautuu. Kaikki tiedot ovat kuvitteellisia.</p>
+          <p id="scenario-status" class="form-note" role="status"></p>
+          <div class="form-heading">
+            <div>
+              <p class="form-kicker">Open a review</p>
+              <h2>Manager verification</h2>
+            </div>
+            <span class="source-badge">AD + Entra ID</span>
+          </div>
+          <label>
+            Manager account
+            <input id="manager-id" name="manager" value="roope.ankka" autocomplete="off" required>
+          </label>
+          <label>
+            Employee account
+            <input id="user-id" name="user" value="aku.ankka" autocomplete="off" required>
+          </label>
+          <label>
+            Review date
+            <input id="as-of" readonly name="as_of" type="date" value="2026-10-07" required>
+          </label>
+          <button class="primary-button" type="submit">Open access review <span aria-hidden="true">→</span></button>
+          <p class="form-note">Demo relationship check only — no authenticated login. Both directory manager records must match.</p>
+        </form>
+      </section>
+
+      <div id="message" class="message" role="alert" hidden></div>
+
+      <section id="review" class="review" hidden>
+        <div class="review-header">
+          <div>
+            <p class="eyebrow">Authorized review</p>
+            <h2 id="employee-name">Employee name</h2>
+            <p id="employee-meta" class="muted"></p>
+          </div>
+          <div class="verified-badge" title="Verified from both directory sources">
+            <span aria-hidden="true">✓</span> Manager verified
+          </div>
+        </div>
+
+        <nav class="review-steps" aria-label="Review steps">
+          <a href="#inventory">1 · Mitä oikeuksia on?</a>
+          <a href="#attention">2 · Mikä vaatii tarkistusta?</a>
+          <a href="#request">3 · Mitä pyydän Service Deskiltä?</a>
+        </nav>
+        <div class="metrics" aria-label="Access review summary">
+          <article class="metric-card"><span>Access items</span><strong id="metric-total">0</strong></article>
+          <article class="metric-card good"><span>Role-aligned</span><strong id="metric-expected">0</strong></article>
+          <article class="metric-card warning"><span>Review</span><strong id="metric-review">0</strong></article>
+          <article class="metric-card info"><span>Suggestions</span><strong id="metric-suggestions">0</strong></article>
+        </div>
+
+        <section id="attention" class="panel section-block" aria-labelledby="briefing-title">
+          <div class="panel-heading">
+            <div><p class="panel-kicker">Evidence-backed briefing</p><h3 id="briefing-title">What needs attention?</h3></div>
+            <button id="summary-button" class="secondary-button" type="button">Prepare briefing</button>
+          </div>
+          <p class="muted">A concise view of the recorded findings. Every point includes its source.</p>
+          <div id="summary-result" role="status" aria-live="polite" hidden></div>
+        </section>
+
+        <div class="dashboard-grid">
+          <article id="account-card" class="panel account-card">
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">Active Directory</p>
+                <h3>Account lifecycle</h3>
+              </div>
+              <span id="account-status" class="tag">Status</span>
+            </div>
+            <div class="expiry-row">
+              <div><span>Account expires</span><strong id="account-expiry">—</strong></div>
+              <div><span>Days remaining</span><strong id="days-remaining">—</strong></div>
+              <div><span>Contract ends</span><strong id="contract-end">—</strong></div>
+            </div>
+            <ul id="account-messages" class="evidence-list"></ul>
+          </article>
+
+          <article class="panel boundary-card">
+            <p class="panel-kicker">Safety boundary</p>
+            <h3>No write access. Ever.</h3>
+            <p id="decision-boundary" class="muted"></p>
+            <div class="boundary-flow">
+              <span>Assistant explains</span><span aria-hidden="true">→</span>
+              <span>Manager requests</span><span aria-hidden="true">→</span>
+              <span>ICT validates</span>
+            </div>
+          </article>
+        </div>
+
+        <section id="inventory" class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">Current state</p><h2>Access inventory</h2></div>
+            <p>Direct and inherited access remain visible and traceable.</p>
+          </div>
+          <div id="access-groups" class="access-groups"></div>
+        </section>
+
+        <section class="section-block suggestions-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">Decision support</p><h2>Possible missing access</h2></div>
+            <p>Derived from approved attribute profiles—not from autonomous AI decisions.</p>
+          </div>
+          <div id="suggestions" class="suggestion-grid"></div>
+        </section>
+
+        <section id="request" class="request-builder">
+          <div class="request-intro">
+            <p class="eyebrow">Next step</p>
+            <h2>Prepare a Service Desk request</h2>
+            <p>
+              Select the changes you want ICT to review. This creates copyable text only;
+              it does not open a ticket or change access.
+            </p>
+          </div>
+          <div id="expiry-request" hidden>
+            <h3>Account expiry verification</h3>
+            <p>Send this draft through your normal Service Desk process after reviewing it.</p>
+            <pre id="expiry-draft"></pre>
+          </div>
+          <form id="draft-form" class="draft-form">
+            <div class="change-columns">
+              <fieldset>
+                <legend>Requested additions</legend>
+                <div id="addition-options" class="option-list"></div>
+              </fieldset>
+              <fieldset>
+                <legend>Requested removals</legend>
+                <div id="removal-options" class="option-list"></div>
+              </fieldset>
+            </div>
+            <label>
+              Business reason
+              <textarea id="reason" rows="3" placeholder="Explain why the change is needed…" required></textarea>
+            </label>
+            <button class="primary-button" type="submit">Create request draft</button>
+          </form>
+          <div id="draft-result" class="draft-result" hidden>
+            <div class="draft-heading">
+              <div><p class="panel-kicker">Draft only</p><h3>Service Desk request</h3></div>
+              <button id="copy-draft" class="secondary-button" type="button">Copy text</button>
+            </div>
+            <pre id="draft-text"></pre>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <span>Manager Access Review Assistant</span>
+      <span>Ankkalinna Identity Lab Oy · Synthetic data · Local demo</span>
+    </footer>
+  <script>window.staticDemoData={"scenarios": [{"id": "mikki-privileged", "title": "Mikki: perusteltukin ylläpito-oikeus tarkistetaan", "employee": "mikki.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "taavi-new-starter", "title": "Taavi: uuden työntekijän dokumentoitu roolipohja", "employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "hansu-seasonal", "title": "Hansu: kausityön tunnus vanhenee seitsemässä päivässä", "employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07"}, {"id": "iines-contract-extension", "title": "Iines: jatkettu sopimus mutta vanha tunnuksen päättymispäivä", "employee": "iines.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "minni-inherited", "title": "Minni: peritty jäsenyys näkyy perittynä", "employee": "minni.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "hannu-legacy-finance", "title": "Hannu: myyntiin siirtyneen vanha talousoikeus", "employee": "hannu.hanhi", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "pelle-undocumented", "title": "Pelle: kokeiluryhmän käyttötarkoitus puuttuu", "employee": "pelle.peloton", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "leenu-mail-and-distribution", "title": "Leenu: jaettu postilaatikko ja jakeluryhmä", "employee": "leenu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "tupu-organization-wide", "title": "Tupu: organisaation yhteinen oikeus erottuu", "employee": "tupu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "hupu-expired", "title": "Hupu: päättynyt työsuhde ja vanhentunut tunnus", "employee": "hupu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "lupu-dormant", "title": "Lupu: lähdetiedossa käyttämättömäksi merkitty oikeus", "employee": "lupu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "mikki-manager-conflict", "title": "Mikki: AD ja Entra kertovat eri esihenkilön", "employee": "mikki.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "taavi-manager-missing", "title": "Taavi: Entran esihenkilötieto puuttuu", "employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "hansu-wrong-manager", "title": "Hansu: Roope ei ole Mummon työntekijän esihenkilö", "employee": "hansu.hanhi", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "minni-self-review", "title": "Minni: omien oikeuksien esihenkilötarkistus estetään", "employee": "minni.hiiri", "manager": "minni.hiiri", "review_date": "2026-10-07"}, {"id": "taavi-no-expiry", "title": "Taavi: päättymispäivää ei ole asetettu", "employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "hansu-expiry-today", "title": "Hansu: päättymisen raja-arvo today", "employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07"}, {"id": "hansu-expiry-90-days", "title": "Hansu: päättymisen raja-arvo 90-days", "employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07"}, {"id": "hansu-expiry-91-days", "title": "Hansu: päättymisen raja-arvo 91-days", "employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07"}, {"id": "pelle-source-name-collision", "title": "Pelle: sama nimi AD:ssa ei tarkoita Entra-oikeutta", "employee": "pelle.peloton", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "taavi-already-member", "title": "Taavi: olemassa olevaa oikeutta ei ehdoteta uudestaan", "employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07"}, {"id": "mikki-duplicate-identity", "title": "Mikki: monistunut käyttäjätunnus keskeyttää analyysin", "employee": "mikki.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07"}], "records": {"": {"employee": "aku.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "aku.ankka", "display_name": "Aku Ankka", "job_title": "HR Specialist", "department": "Human Resources", "office_location": "Ankkalinna"}, "account_status": {"status": "expiring_soon", "ad_account_expires_at": "2026-12-15", "days_remaining": 69, "contract_end_date": "2027-06-30", "contract_date_mismatch": true, "requires_service_desk_notice": true, "messages": ["AD account expires in 69 days.", "AD account expiry is earlier than the recorded contract end date; Service Desk should verify the account date."], "service_desk_notice_draft": "Subject: Please verify AD account expiry - Aku Ankka\n\nHello Service Desk,\n\nPlease verify the AD account expiry for Aku Ankka (aku.ankka).\nCurrent AD account expiry: 2026-12-15\nRecorded contract end date: 2027-06-30\nThe assistant has not changed the account. Please validate the dates and follow the normal approval process.\n\nManager: roope.ankka"}, "summary": {"total": 6, "expected": 3, "organization_wide": 1, "review": 2, "suggestions": 2}, "categories": {"expected": [{"name": "HR-Shared-Drive-Read", "source": "Active Directory", "resource_type": "security_group", "assignment": "transitive", "purpose": "Read access to the HR shared drive", "risk_tags": []}, {"name": "HR-Employees", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Core HR application access", "risk_tags": []}, {"name": "henkilosto@ankkalinna.example.invalid", "source": "Exchange Online", "resource_type": "shared_mailbox", "assignment": "direct", "purpose": "Handle incoming employee requests", "risk_tags": []}], "organization_wide": [{"name": "All-Employees", "source": "Microsoft 365", "resource_type": "microsoft_365_group", "assignment": "transitive", "purpose": "Organization-wide communication", "risk_tags": []}], "review": [{"name": "Legacy-HR-Archive", "source": "Active Directory", "resource_type": "security_group", "assignment": "direct", "purpose": null, "risk_tags": [], "evidence": ["access purpose is missing"]}, {"name": "Rahasailio-Admin", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Administer finance application settings", "risk_tags": ["privileged"], "evidence": ["department mismatch: employee is in Human Resources; expected: Finance", "privileged access"]}]}, "access_suggestions": [{"name": "Ankkalinna-Office-Employees", "source": "Active Directory", "resource_type": "security_group", "purpose": "Access to Ankkalinna office resources", "profile": "Ankkalinna office baseline", "matched_attributes": ["office_location=Ankkalinna"], "notice": "Suggestion only; ICT or Service Desk must validate the need and eligibility."}, {"name": "HR-Case-Management-Users", "source": "Entra ID", "resource_type": "security_group", "purpose": "Access to the HR case management application", "profile": "HR specialist baseline", "matched_attributes": ["job_title=HR Specialist", "department=Human Resources"], "notice": "Suggestion only; ICT or Service Desk must validate the need and eligibility."}], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "6 recorded access items; 2 need human review; 2 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD account expires in 69 days.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}, {"id": "E002", "kind": "account", "text": "AD account expiry is earlier than the recorded contract end date; Service Desk should verify the account date.", "report_path": "/account_status/messages/1", "source": "AD / contract snapshot"}, {"id": "E003", "kind": "review", "text": "Review Legacy-HR-Archive: access purpose is missing.", "report_path": "/categories/review/0", "source": "Active Directory"}, {"id": "E004", "kind": "review", "text": "Review Rahasailio-Admin: department mismatch: employee is in Human Resources; expected: Finance; privileged access.", "report_path": "/categories/review/1", "source": "Entra ID"}, {"id": "E005", "kind": "suggestion", "text": "Consider Ankkalinna-Office-Employees for human validation: office_location=Ankkalinna. Suggestion only; ICT or Service Desk must validate the need and eligibility.", "report_path": "/access_suggestions/0", "source": "Access profile: Ankkalinna office baseline"}, {"id": "E006", "kind": "suggestion", "text": "Consider HR-Case-Management-Users for human validation: job_title=HR Specialist; department=Human Resources. Suggestion only; ICT or Service Desk must validate the need and eligibility.", "report_path": "/access_suggestions/1", "source": "Access profile: HR specialist baseline"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.01, "model_calls": 0, "evidence_count": 6}}}, "mikki-privileged": {"employee": "mikki.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "mikki.hiiri", "display_name": "Mikki Hiiri", "job_title": "Security Analyst", "department": "Security", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 2, "expected": 1, "organization_wide": 0, "review": 1, "suggestions": 0}, "categories": {"expected": [{"name": "Ankkalinna-Security-Readers", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": [{"name": "Ankkalinna-Security-Admins", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": ["privileged"], "evidence": ["privileged access"]}]}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "2 recorded access items; 1 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "review", "text": "Review Ankkalinna-Security-Admins: privileged access.", "report_path": "/categories/review/0", "source": "Entra ID"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "taavi-new-starter": {"employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "taavi.ankka", "display_name": "Taavi Ankka", "job_title": "Research Specialist", "department": "Research", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 0, "expected": 0, "organization_wide": 0, "review": 0, "suggestions": 1}, "categories": {"expected": [], "organization_wide": [], "review": []}, "access_suggestions": [{"name": "Ankkalinna-Research-Lab", "source": "Entra ID", "resource_type": "security_group", "purpose": "Documented role requirement; validate eligibility", "profile": "Research Specialist baseline", "matched_attributes": ["job_title=Research Specialist", "department=Research"], "notice": "Suggestion only; ICT or Service Desk must validate the need and eligibility."}], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "0 recorded access items; 0 need human review; 1 possible additions need validation.", "evidence": [{"id": "E001", "kind": "suggestion", "text": "Consider Ankkalinna-Research-Lab for human validation: job_title=Research Specialist; department=Research. Suggestion only; ICT or Service Desk must validate the need and eligibility.", "report_path": "/access_suggestions/0", "source": "Access profile: Research Specialist baseline"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "hansu-seasonal": {"employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "mummo.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "hansu.hanhi", "display_name": "Hansu Hanhi", "job_title": "Seasonal Farm Assistant", "department": "Farm", "office_location": "Ankkalinna"}, "account_status": {"status": "expiring_soon", "ad_account_expires_at": "2026-10-14", "days_remaining": 7, "contract_end_date": "2026-10-14", "contract_date_mismatch": false, "requires_service_desk_notice": true, "messages": ["AD account expires in 7 days."], "service_desk_notice_draft": "Subject: Please verify AD account expiry - Hansu Hanhi\n\nHello Service Desk,\n\nPlease verify the AD account expiry for Hansu Hanhi (hansu.hanhi).\nCurrent AD account expiry: 2026-10-14\nRecorded contract end date: 2026-10-14\nThe assistant has not changed the account. Please validate the dates and follow the normal approval process.\n\nManager: mummo.ankka"}, "summary": {"total": 1, "expected": 1, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [{"name": "Maatila-Tyovuorot", "source": "Active Directory", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD account expires in 7 days.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "iines-contract-extension": {"employee": "iines.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "iines.ankka", "display_name": "Iines Ankka", "job_title": "HR Specialist", "department": "Human Resources", "office_location": "Ankkalinna"}, "account_status": {"status": "expiring_soon", "ad_account_expires_at": "2026-10-20", "days_remaining": 13, "contract_end_date": "2027-06-30", "contract_date_mismatch": true, "requires_service_desk_notice": true, "messages": ["AD account expires in 13 days.", "AD account expiry is earlier than the recorded contract end date; Service Desk should verify the account date."], "service_desk_notice_draft": "Subject: Please verify AD account expiry - Iines Ankka\n\nHello Service Desk,\n\nPlease verify the AD account expiry for Iines Ankka (iines.ankka).\nCurrent AD account expiry: 2026-10-20\nRecorded contract end date: 2027-06-30\nThe assistant has not changed the account. Please validate the dates and follow the normal approval process.\n\nManager: roope.ankka"}, "summary": {"total": 1, "expected": 1, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [{"name": "Ankkalinna-HR", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD account expires in 13 days.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}, {"id": "E002", "kind": "account", "text": "AD account expiry is earlier than the recorded contract end date; Service Desk should verify the account date.", "report_path": "/account_status/messages/1", "source": "AD / contract snapshot"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 2}}}, "minni-inherited": {"employee": "minni.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "minni.hiiri", "display_name": "Minni Hiiri", "job_title": "Application Specialist", "department": "Applications", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 1, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [{"name": "Ankkalinna-Sovellustuki", "source": "Entra ID", "resource_type": "security_group", "assignment": "transitive", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 0}}}, "hannu-legacy-finance": {"employee": "hannu.hanhi", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "hannu.hanhi", "display_name": "Hannu Hanhi", "job_title": "Sales Specialist", "department": "Sales", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 0, "organization_wide": 0, "review": 1, "suggestions": 1}, "categories": {"expected": [], "organization_wide": [], "review": [{"name": "Rahasailio-Luku", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": [], "evidence": ["department mismatch: employee is in Sales; expected: Finance"]}]}, "access_suggestions": [{"name": "Ankkalinna-Sales-CRM", "source": "Entra ID", "resource_type": "security_group", "purpose": "Documented role requirement; validate eligibility", "profile": "Sales Specialist baseline", "matched_attributes": ["job_title=Sales Specialist", "department=Sales"], "notice": "Suggestion only; ICT or Service Desk must validate the need and eligibility."}], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 1 need human review; 1 possible additions need validation.", "evidence": [{"id": "E001", "kind": "review", "text": "Review Rahasailio-Luku: department mismatch: employee is in Sales; expected: Finance.", "report_path": "/categories/review/0", "source": "Entra ID"}, {"id": "E002", "kind": "suggestion", "text": "Consider Ankkalinna-Sales-CRM for human validation: job_title=Sales Specialist; department=Sales. Suggestion only; ICT or Service Desk must validate the need and eligibility.", "report_path": "/access_suggestions/0", "source": "Access profile: Sales Specialist baseline"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 2}}}, "pelle-undocumented": {"employee": "pelle.peloton", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "pelle.peloton", "display_name": "Pelle Peloton", "job_title": "Engineer", "department": "Engineering", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 0, "organization_wide": 0, "review": 1, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [], "review": [{"name": "Pajan-Kokeilu", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": null, "risk_tags": [], "evidence": ["access purpose is missing"]}]}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 1 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "review", "text": "Review Pajan-Kokeilu: access purpose is missing.", "report_path": "/categories/review/0", "source": "Entra ID"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "leenu-mail-and-distribution": {"employee": "leenu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "leenu.ankka", "display_name": "Leenu Ankka", "job_title": "Communications Specialist", "department": "Communications", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 2, "expected": 2, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [{"name": "Ankkalinna-Uutiset", "source": "Exchange Online", "resource_type": "distribution_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}, {"name": "viestinta@ankkalinna.example.invalid", "source": "Exchange Online", "resource_type": "shared_mailbox", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "2 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 0}}}, "tupu-organization-wide": {"employee": "tupu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "tupu.ankka", "display_name": "Tupu Ankka", "job_title": "Trainee", "department": "IT Training", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 0, "organization_wide": 1, "review": 0, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [{"name": "Ankkalinna-All-Employees", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 0}}}, "hupu-expired": {"employee": "hupu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "hupu.ankka", "display_name": "Hupu Ankka", "job_title": "Project Assistant", "department": "Projects", "office_location": "Ankkalinna"}, "account_status": {"status": "expired", "ad_account_expires_at": "2026-10-06", "days_remaining": -1, "contract_end_date": "2026-10-06", "contract_date_mismatch": false, "requires_service_desk_notice": true, "messages": ["AD account expired 1 days ago."], "service_desk_notice_draft": "Subject: Please verify AD account expiry - Hupu Ankka\n\nHello Service Desk,\n\nPlease verify the AD account expiry for Hupu Ankka (hupu.ankka).\nCurrent AD account expiry: 2026-10-06\nRecorded contract end date: 2026-10-06\nThe assistant has not changed the account. Please validate the dates and follow the normal approval process.\n\nManager: roope.ankka"}, "summary": {"total": 1, "expected": 1, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [{"name": "Ankkalinna-Projektiarkisto", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD account expired 1 days ago.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "lupu-dormant": {"employee": "lupu.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "lupu.ankka", "display_name": "Lupu Ankka", "job_title": "Project Specialist", "department": "Projects", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 0, "organization_wide": 0, "review": 1, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [], "review": [{"name": "Ankkalinna-Vanha-Projekti", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": ["dormant"], "evidence": ["access is marked dormant"]}]}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 1 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "review", "text": "Review Ankkalinna-Vanha-Projekti: access is marked dormant.", "report_path": "/categories/review/0", "source": "Entra ID"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "mikki-manager-conflict": {"employee": "mikki.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07", "error": "access denied: requester must be the employee's direct manager in both AD and Entra ID"}, "taavi-manager-missing": {"employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "error": "access denied: non-empty manager identities required in both AD and Entra ID"}, "hansu-wrong-manager": {"employee": "hansu.hanhi", "manager": "roope.ankka", "review_date": "2026-10-07", "error": "access denied: requester must be the employee's direct manager in both AD and Entra ID"}, "minni-self-review": {"employee": "minni.hiiri", "manager": "minni.hiiri", "review_date": "2026-10-07", "error": "access denied: requester must be the employee's direct manager in both AD and Entra ID"}, "taavi-no-expiry": {"employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "taavi.ankka", "display_name": "Taavi Ankka", "job_title": "Research Specialist", "department": "Research", "office_location": "Ankkalinna"}, "account_status": {"status": "no_expiry_configured", "ad_account_expires_at": null, "days_remaining": null, "requires_service_desk_notice": false, "messages": ["AD does not contain an account expiry date."]}, "summary": {"total": 0, "expected": 0, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "0 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD does not contain an account expiry date.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "hansu-expiry-today": {"employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "mummo.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "hansu.hanhi", "display_name": "Hansu Hanhi", "job_title": "Seasonal Farm Assistant", "department": "Farm", "office_location": "Ankkalinna"}, "account_status": {"status": "expiring_soon", "ad_account_expires_at": "2026-10-07", "days_remaining": 0, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": true, "messages": ["AD account expires in 0 days."], "service_desk_notice_draft": "Subject: Please verify AD account expiry - Hansu Hanhi\n\nHello Service Desk,\n\nPlease verify the AD account expiry for Hansu Hanhi (hansu.hanhi).\nCurrent AD account expiry: 2026-10-07\nThe assistant has not changed the account. Please validate the dates and follow the normal approval process.\n\nManager: mummo.ankka"}, "summary": {"total": 0, "expected": 0, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "0 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD account expires in 0 days.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "hansu-expiry-90-days": {"employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "mummo.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "hansu.hanhi", "display_name": "Hansu Hanhi", "job_title": "Seasonal Farm Assistant", "department": "Farm", "office_location": "Ankkalinna"}, "account_status": {"status": "expiring_soon", "ad_account_expires_at": "2027-01-05", "days_remaining": 90, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": true, "messages": ["AD account expires in 90 days."], "service_desk_notice_draft": "Subject: Please verify AD account expiry - Hansu Hanhi\n\nHello Service Desk,\n\nPlease verify the AD account expiry for Hansu Hanhi (hansu.hanhi).\nCurrent AD account expiry: 2027-01-05\nThe assistant has not changed the account. Please validate the dates and follow the normal approval process.\n\nManager: mummo.ankka"}, "summary": {"total": 0, "expected": 0, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "0 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [{"id": "E001", "kind": "account", "text": "AD account expires in 90 days.", "report_path": "/account_status/messages/0", "source": "AD / contract snapshot"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "hansu-expiry-91-days": {"employee": "hansu.hanhi", "manager": "mummo.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "mummo.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "hansu.hanhi", "display_name": "Hansu Hanhi", "job_title": "Seasonal Farm Assistant", "department": "Farm", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2027-01-06", "days_remaining": 91, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 0, "expected": 0, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "0 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 0}}}, "pelle-source-name-collision": {"employee": "pelle.peloton", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "pelle.peloton", "display_name": "Pelle Peloton", "job_title": "Engineer", "department": "Engineering", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 1, "organization_wide": 0, "review": 0, "suggestions": 1}, "categories": {"expected": [{"name": "Paja-Lab", "source": "Active Directory", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [{"name": "Paja-Lab", "source": "Entra ID", "resource_type": "security_group", "purpose": "Documented role requirement; validate eligibility", "profile": "Engineer baseline", "matched_attributes": ["job_title=Engineer", "department=Engineering"], "notice": "Suggestion only; ICT or Service Desk must validate the need and eligibility."}], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 1 possible additions need validation.", "evidence": [{"id": "E001", "kind": "suggestion", "text": "Consider Paja-Lab for human validation: job_title=Engineer; department=Engineering. Suggestion only; ICT or Service Desk must validate the need and eligibility.", "report_path": "/access_suggestions/0", "source": "Access profile: Engineer baseline"}], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 1}}}, "taavi-already-member": {"employee": "taavi.ankka", "manager": "roope.ankka", "review_date": "2026-10-07", "report": {"authorization": {"requester_id": "roope.ankka", "authorized": true, "basis": "Requester is the direct manager in both AD and Entra ID."}, "employee": {"user_id": "taavi.ankka", "display_name": "Taavi Ankka", "job_title": "Research Specialist", "department": "Research", "office_location": "Ankkalinna"}, "account_status": {"status": "active", "ad_account_expires_at": "2028-01-01", "days_remaining": 451, "contract_end_date": null, "contract_date_mismatch": false, "requires_service_desk_notice": false, "messages": []}, "summary": {"total": 1, "expected": 1, "organization_wide": 0, "review": 0, "suggestions": 0}, "categories": {"expected": [{"name": "Ankkalinna-Research-Lab", "source": "Entra ID", "resource_type": "security_group", "assignment": "direct", "purpose": "Documented business access", "risk_tags": []}], "organization_wide": [], "review": []}, "access_suggestions": [], "service_desk_next_step": "Ask ICT or Service Desk to validate and implement any requested change through the normal approval process.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access."}, "briefing": {"mode": "deterministic", "fallback_reason": null, "overview": "1 recorded access items; 0 need human review; 0 possible additions need validation.", "evidence": [], "coverage_notice": "Synthetic snapshot only. Collection time and source completeness are not recorded; this is not a live or complete access certification.", "decision_boundary": "Decision support only. The assistant cannot grant, remove, approve or deny access.", "metrics": {"duration_ms": 0.0, "model_calls": 0, "evidence_count": 0}}}, "mikki-duplicate-identity": {"employee": "mikki.hiiri", "manager": "roope.ankka", "review_date": "2026-10-07", "error": "duplicate employee id: mikki.hiiri"}}};</script>
+<script>// This is deliberately a public, synthetic presentation. It is not authorization.
+window.staticDemoPost = async function(url, payload) {
+  const record = window.staticDemoData.records[payload.scenario_id || ''];
+  if (!record) throw new Error('Unknown demo scenario');
+  if (payload.user_id !== record.employee || payload.requester_id.toLowerCase() !== record.manager.toLowerCase()) {
+    throw new Error('This prepared example uses the selected sample identities. Choose another scenario to review another employee.');
+  }
+  if (payload.as_of !== record.review_date) throw new Error('This prepared example uses the displayed review date.');
+  if (record.error) throw new Error(record.error);
+  if (url === '/api/review') return structuredClone(record.report);
+  if (url === '/api/summary') return structuredClone(record.briefing);
+  if (url !== '/api/service-desk-draft') throw new Error('Unsupported demo action');
+  const report = record.report;
+  const additions = payload.additions || [];
+  const removals = payload.removals || [];
+  const knownAdditions = new Set(report.access_suggestions.map(item=>item.name));
+  const knownRemovals = new Set(Object.values(report.categories).flat().map(item=>item.name));
+  if (!additions.length && !removals.length) throw new Error('Select at least one change.');
+  if (additions.some(x=>!knownAdditions.has(x)) || removals.some(x=>!knownRemovals.has(x))) throw new Error('Select changes from this example only.');
+  if (!payload.reason || !payload.reason.trim()) throw new Error('Provide a business reason.');
+  const e = report.employee;
+  const lines = [`Subject: Access change request - ${e.display_name}`, '', 'Hello Service Desk,', '',
+    `Please review the following access changes for ${e.display_name} (${e.user_id}).`,
+    `Role: ${e.job_title}`, `Department: ${e.department}`, `Location: ${e.office_location}`, ''];
+  if (additions.length) lines.push('Requested additions:', ...additions.map(x=>`- ${x}`), '');
+  if (removals.length) lines.push('Requested removals:', ...removals.map(x=>`- ${x}`), '');
+  lines.push(`Business reason: ${payload.reason.trim()}`, `Requesting manager: ${record.manager}`, '',
+    'Please validate eligibility and implement only through the normal approval process.',
+    'The assistant created this draft but did not make any access changes.');
+  return {draft:lines.join('\n'),submitted:false};
+};
+
+const reviewForm = document.querySelector("#review-form");
+const draftForm = document.querySelector("#draft-form");
+const reviewSection = document.querySelector("#review");
+const message = document.querySelector("#message");
+const draftResult = document.querySelector("#draft-result");
+let currentReview = null;
+let reviewPayload = null;
+let reviewGeneration = 0;
+
+reviewForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  hideMessage();
+  draftResult.hidden = true;
+  currentReview = null;
+  reviewPayload = null;
+  reviewGeneration += 1;
+  const generation = reviewGeneration;
+  reviewSection.hidden = true;
+  document.querySelector("#summary-result").hidden = true;
+  document.querySelector("#summary-button").disabled = false;
+  const button = reviewForm.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = "Verifying manager…";
+  try {
+    const payload = basePayload();
+    const report = await postJson("/api/review", payload);
+    if (generation !== reviewGeneration) return;
+    reviewPayload = payload;
+    currentReview = report;
+    renderReview(report);
+    reviewSection.hidden = false;
+    reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    if (generation !== reviewGeneration) return;
+    currentReview = null;
+    reviewSection.hidden = true;
+    showMessage(error.message);
+  } finally {
+    if (generation !== reviewGeneration) return;
+    button.disabled = false;
+    button.innerHTML = "Open access review <span aria-hidden='true'>→</span>";
+  }
+});
+
+draftForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  hideMessage();
+  if (!currentReview) return;
+  const generation = reviewGeneration;
+  const additions = selectedValues("addition");
+  const removals = selectedValues("removal");
+  if (!additions.length && !removals.length) {
+    showMessage("Select at least one requested addition or removal.");
+    return;
+  }
+  try {
+    const response = await postJson("/api/service-desk-draft", {
+      ...reviewPayload,
+      additions,
+      removals,
+      reason: document.querySelector("#reason").value.trim(),
+    });
+    if (generation !== reviewGeneration) return;
+    document.querySelector("#draft-text").textContent = response.draft;
+    draftResult.hidden = false;
+    draftResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (error) {
+    if (generation === reviewGeneration) showMessage(error.message);
+  }
+});
+
+document.querySelector("#copy-draft").addEventListener("click", async (event) => {
+  try { await navigator.clipboard.writeText(document.querySelector("#draft-text").textContent); } catch { showMessage("Select the draft text and copy it with Ctrl+C / Cmd+C."); return; }
+  event.currentTarget.textContent = "Copied";
+  window.setTimeout(() => { event.currentTarget.textContent = "Copy text"; }, 1400);
+});
+
+function basePayload() {
+  return {
+    scenario_id: document.querySelector("#scenario-select").value,
+    requester_id: document.querySelector("#manager-id").value.trim(),
+    user_id: document.querySelector("#user-id").value.trim(),
+    as_of: document.querySelector("#as-of").value,
+  };
+}
+
+async function postJson(url, payload) {
+  if (window.staticDemoPost) return window.staticDemoPost(url, payload);
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || "The request could not be completed.");
+  return body;
+}
+
+function renderReview(report) {
+  const employee = report.employee;
+  document.querySelector("#employee-name").textContent = employee.display_name;
+  document.querySelector("#employee-meta").textContent =
+    `${employee.job_title} · ${employee.department} · ${employee.office_location}`;
+  document.querySelector("#metric-total").textContent = report.summary.total;
+  document.querySelector("#metric-expected").textContent = report.summary.expected;
+  document.querySelector("#metric-review").textContent = report.summary.review;
+  document.querySelector("#metric-suggestions").textContent = report.summary.suggestions;
+  document.querySelector("#decision-boundary").textContent = report.decision_boundary;
+  renderAccount(report.account_status);
+  renderAccess(report.categories);
+  renderSuggestions(report.access_suggestions);
+  renderChangeOptions(report.categories, report.access_suggestions);
+}
+
+function renderAccount(account) {
+  document.querySelector("#expiry-request").hidden = !account.service_desk_notice_draft;
+  document.querySelector("#expiry-draft").textContent = account.service_desk_notice_draft || "";
+  document.querySelector("#account-expiry").textContent = account.ad_account_expires_at || "Not configured";
+  document.querySelector("#days-remaining").textContent = account.days_remaining ?? "—";
+  document.querySelector("#contract-end").textContent = account.contract_end_date || "Not available";
+  const status = document.querySelector("#account-status");
+  status.textContent = account.status.replaceAll("_", " ");
+  status.className = `tag ${statusClass(account.status)}`;
+  const messages = document.querySelector("#account-messages");
+  messages.replaceChildren(...account.messages.map((text) => element("li", {}, text)));
+}
+
+function renderAccess(categories) {
+  const definitions = [
+    ["Requires review", categories.review, "Review the evidence before requesting any change."],
+    ["Role-aligned", categories.expected, "Access that matches the current documented rules."],
+    ["Organization-wide", categories.organization_wide, "Common access reported separately to reduce noise."],
+  ];
+  const container = document.querySelector("#access-groups");
+  container.replaceChildren(...definitions.map(([title, items, description]) => {
+    const group = element("article", { className: "access-group" });
+    const heading = element("div", { className: "access-group-heading" });
+    const headingText = element("div");
+    headingText.append(element("h3", {}, title), element("small", {}, description));
+    heading.append(headingText, element("span", { className: "count-badge" }, String(items.length)));
+    const list = element("div", { className: "access-list" });
+    items.forEach((item) => list.append(accessRow(item)));
+    group.append(heading, list);
+    return group;
+  }));
+}
+
+function accessRow(item) {
+  const row = element("div", { className: "access-item" });
+  const identity = element("div");
+  identity.append(element("div", { className: "access-name" }, item.name), element("small", {}, item.resource_type.replaceAll("_", " ")));
+  row.append(
+    identity,
+    element("small", {}, item.source),
+    element("span", { className: "assignment" }, item.assignment),
+    element("span", { className: "finding" }, item.evidence ? item.evidence.join(" · ") : item.purpose || "Purpose not documented"),
+  );
+  return row;
+}
+
+function renderSuggestions(suggestions) {
+  const container = document.querySelector("#suggestions");
+  if (!suggestions.length) {
+    container.replaceChildren(element("p", { className: "empty-state" }, "No suggestions from the current approved profiles."));
+    return;
+  }
+  container.replaceChildren(...suggestions.map((item) => {
+    const card = element("article", { className: "suggestion-card" });
+    const attributes = element("div", { className: "attribute-list" });
+    item.matched_attributes.forEach((attribute) => attributes.append(element("span", { className: "attribute-chip" }, attribute)));
+    card.append(element("h3", {}, item.name), element("p", {}, item.purpose), attributes);
+    return card;
+  }));
+}
+
+function renderChangeOptions(categories, suggestions) {
+  const currentItems = [...categories.review, ...categories.expected, ...categories.organization_wide];
+  renderOptions("#addition-options", suggestions.map((item) => item.name), "addition");
+  renderOptions("#removal-options", currentItems.map((item) => item.name), "removal");
+}
+
+function renderOptions(selector, values, name) {
+  const container = document.querySelector(selector);
+  if (!values.length) {
+    container.replaceChildren(element("p", { className: "empty-state" }, "No options available."));
+    return;
+  }
+  container.replaceChildren(...values.map((value) => {
+    const input = element("input", { type: "checkbox", name, value });
+    const label = element("label");
+    label.append(input, document.createTextNode(value));
+    return label;
+  }));
+}
+
+function selectedValues(name) {
+  return [...document.querySelectorAll(`input[name='${name}']:checked`)].map((input) => input.value);
+}
+
+function statusClass(status) {
+  if (status === "expired") return "danger";
+  if (status === "expiring_soon") return "warning";
+  if (status === "active") return "good";
+  return "";
+}
+
+function element(tagName, properties = {}, text = null) {
+  const node = document.createElement(tagName);
+  Object.assign(node, properties);
+  if (text !== null) node.textContent = text;
+  return node;
+}
+
+function showMessage(text) {
+  message.textContent = text;
+  message.hidden = false;
+  message.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function hideMessage() {
+  message.hidden = true;
+  message.textContent = "";
+}
+
+
+
+document.querySelector("#summary-button").addEventListener("click", async () => {
+  if (!currentReview || !reviewPayload) return;
+  const generation = reviewGeneration;
+  const button = document.querySelector("#summary-button");
+  const target = document.querySelector("#summary-result");
+  button.disabled = true;
+  target.hidden = false;
+  target.textContent = "Preparing briefing…";
+  try {
+    const briefing = await postJson("/api/summary", reviewPayload);
+    if (generation !== reviewGeneration) return;
+    const modes = {deterministic: "Rule-based briefing", model_ordered: "AI-ordered evidence", fallback: "Rule-based fallback — AI unavailable or response rejected"};
+    const list = element("ul", {className: "evidence-list"});
+    briefing.evidence.forEach((item) => {
+      const row = element("li");
+      row.append(element("p", {}, item.text), element("small", {}, `${item.id} · ${item.source} · Report: ${item.report_path}`));
+      list.append(row);
+    });
+    target.replaceChildren(
+      element("h4", {}, modes[briefing.mode]),
+      element("p", {}, briefing.overview), list,
+      element("p", {className: "muted"}, briefing.coverage_notice),
+      element("small", {}, `${briefing.metrics.duration_ms} ms · ${briefing.metrics.model_calls} model calls · ${briefing.metrics.evidence_count} evidence items`),
+    );
+  } catch (error) {
+    if (generation === reviewGeneration) target.textContent = error.message;
+  } finally {
+    if (generation === reviewGeneration) button.disabled = false;
+  }
+});
+
+
+const scenarioSelect = document.querySelector("#scenario-select");
+let demoScenarios = [];
+(window.staticDemoData ? Promise.resolve({ok:true,json:async()=>window.staticDemoData}) : fetch("/api/demo-scenarios")).then(async (response) => {
+  if (!response.ok) throw new Error("Case list unavailable; you can still enter the demo identities.");
+  const data = await response.json();
+  demoScenarios = data.scenarios;
+  demoScenarios.forEach((scenario) => scenarioSelect.append(element("option", {value: scenario.id}, scenario.title)));
+  document.querySelector("#scenario-status").textContent = `${demoScenarios.length} Ankkalinnan esimerkkitapausta`;
+}).catch((error) => { document.querySelector("#scenario-status").textContent = error.message; });
+
+scenarioSelect.addEventListener("change", () => {
+  const scenario = demoScenarios.find((item) => item.id === scenarioSelect.value);
+  document.querySelector("#scenario-status").textContent = scenario ? scenario.title : "Nykyisen snapshotin tarkistus";
+  document.querySelector("#manager-id").value = scenario ? scenario.manager : "roope.ankka";
+  document.querySelector("#user-id").value = scenario ? scenario.employee : "aku.ankka";
+  document.querySelector("#as-of").value = scenario ? scenario.review_date : "2026-10-07";
+  document.querySelector("#reason").value = "";
+  reviewForm.requestSubmit();
+});
+
+</script>
+</body>
+</html>
+
+
