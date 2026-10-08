@@ -2,6 +2,7 @@
 from pathlib import Path
 from datetime import date
 import json
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,16 +31,36 @@ def build(destination):
     data = json.dumps(dict(scenarios=catalogue,records=records),ensure_ascii=False).replace('<','\\u003c').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
     html = (assets / 'index.html').read_text(encoding='utf-8')
     html = html.replace('<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">','<link rel="icon" href="data:,">')
+    base_styles = (assets / 'styles.css').read_text(encoding='utf-8')
+    base_styles = re.sub(
+        r'/\* Inter by The Inter Project Authors\..*?\*/\s*@font-face\s*\{.*?\}\s*',
+        '',
+        base_styles,
+        flags=re.DOTALL,
+    )
+    base_styles = re.sub(r'@font-face\s*\{.*?\}\s*', '', base_styles, flags=re.DOTALL)
+    base_styles = base_styles.replace(
+        'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        '"Segoe UI Variable", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+    )
     styles = (
-        (assets / 'styles.css').read_text(encoding='utf-8')
+        base_styles
         + '\n'
         + (ROOT / 'scripts/static-theme.css').read_text(encoding='utf-8')
     )
     html = html.replace('<link rel="stylesheet" href="/assets/styles.css">', '<style>' + styles + '</style>')
     html = html.replace('<script src="/assets/app.js" defer></script>','')
     html = html.replace('href="/"','href="#"')
-    html = html.replace('Read-only demo', 'Static presentation demo')
-    html = html.replace('<p class="eyebrow">Human-in-the-loop identity governance</p>', '<p class="eyebrow">Ankkalinna Identity Lab Oy · Browser demo</p>')
+    html = html.replace('Read-only demo', 'Presentation demo')
+    html = html.replace('<span>Access Review</span>', '<span>Access Review Assistant</span>')
+    html = html.replace('<p class="eyebrow">Human-in-the-loop identity governance</p>', '<p class="eyebrow">Manager access review · Synthetic data</p>')
+    html = html.replace('Access reviews that explain themselves.', 'Review employee access')
+    html = html.replace(
+        'Give verified managers one clear view of employee access, account lifecycle\n'
+        '            and evidence-based suggestions—without allowing the assistant to change anything.',
+        'Inspect recorded access, findings and prepared request drafts for the selected '
+        'synthetic employee.',
+    )
     html = html.replace(
         '<p class="lede">',
         '<div class="demo-notice"><span class="notice-icon" aria-hidden="true">i</span>'
@@ -56,6 +77,7 @@ def build(destination):
         'retrieval paths. It would not submit requests or perform unrestricted searches.</p>',
     )
     html = html.replace('id="as-of" name="as_of"', 'id="as-of" readonly name="as_of"')
+    html = html.replace('Synthetic data · Local demo', 'Synthetic data · Static presentation demo')
     script = (assets / 'app.js').read_text(encoding='utf-8')
     script = script.replace('async function postJson(url, payload) {','async function postJson(url, payload) {\n  if (window.staticDemoPost) return window.staticDemoPost(url, payload);')
     script = script.replace('fetch("/api/demo-scenarios")', '(window.staticDemoData ? Promise.resolve({ok:true,json:async()=>window.staticDemoData}) : fetch("/api/demo-scenarios"))')

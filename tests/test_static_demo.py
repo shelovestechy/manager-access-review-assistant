@@ -27,8 +27,18 @@ class StaticPresentationDemoTests(unittest.TestCase):
         self.assertIn("Static presentation demo", self.html)
 
     def test_pages_demo_uses_muted_palette(self) -> None:
-        self.assertIn("--canvas: #F8F9FA", self.html)
-        self.assertIn("--accent: #D9C7A6", self.html)
+        self.assertIn("--brand: #0F6CBD", self.html)
+        self.assertIn("--canvas: #F5F5F5", self.html)
+
+    def test_pages_demo_uses_native_fluent_typography(self) -> None:
+        self.assertIn('"Segoe UI Variable", "Segoe UI"', self.html)
+        self.assertNotIn("@font-face", self.html)
+        self.assertNotIn("font-family: Inter", self.html)
+
+    def test_pages_demo_reads_like_an_application(self) -> None:
+        self.assertIn("Review employee access", self.html)
+        self.assertIn("Access Review Assistant</span>", self.html)
+        self.assertNotIn("Access reviews that explain themselves.", self.html)
 
     def test_finnish_scenario_text_is_utf8(self) -> None:
         self.assertIn("käsin syötettävät tunnukset", self.html)
